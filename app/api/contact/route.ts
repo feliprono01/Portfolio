@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -20,29 +21,38 @@ export async function POST(request: Request) {
       );
     }
 
-    const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+    const apiKey = process.env.RESEND_API_KEY;
 
-    if (!formspreeId) {
-      // Fallback: just log and pretend success (dev mode)
-      console.log("📬 Contact form (no Formspree ID set):", parsed.data);
-      return NextResponse.json({ success: true });
+    if (!apiKey) {
+      console.warn("⚠️  RESEND_API_KEY no configurada en .env.local");
+      return NextResponse.json(
+        { error: "Configuración de email faltante." },
+        { status: 500 }
+      );
     }
 
-    const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        name: parsed.data.name,
-        email: parsed.data.email,
-        _subject: parsed.data.subject,
-        message: parsed.data.message,
-      }),
+    const resend = new Resend(apiKey);
+    const { name, email, subject, message } = parsed.data;
+
+    const { error } = await resend.emails.send({
+      from: "Portfolio <onboarding@resend.dev>",
+      to: ["felipeprono@gmail.com"],
+      replyTo: email,
+      subject: `[Portfolio] ${subject}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #111;">Nuevo mensaje desde tu portfolio</h2>
+          <p><strong>Nombre:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Asunto:</strong> ${subject}</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;" />
+          <p style="white-space: pre-wrap;">${message}</p>
+        </div>
+      `,
     });
 
-    if (!res.ok) {
+    if (error) {
+      console.error("❌ Resend error:", error);
       return NextResponse.json(
         { error: "Error al enviar el mensaje. Intentá de nuevo." },
         { status: 500 }
