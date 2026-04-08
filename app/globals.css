@@ -1,0 +1,330 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  /* Colors */
+  --bg-primary:   #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-elevated:  #111111;
+  --bg-muted:     #1a1a1a;
+
+  --text-primary:   #ffffff;
+  --text-secondary: #a8a8a8;
+  --text-muted:     #666666;
+  --text-disabled:  #444444;
+
+  --border:        #2a2a2a;
+  --border-subtle: #1a1a1a;
+
+  /* Spacing */
+  --section-px: 1.5rem;
+  --section-py: 5rem;
+  --container-max: 1200px;
+
+  /* Typography */
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: "Libre Baskerville", Georgia, serif;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Z-index scale */
+  --z-nav: 100;
+  --z-modal: 200;
+  --z-tooltip: 300;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Headings use display font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR
+   ═══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-muted);
+  border-radius: 9999px;
+  transition: background var(--transition-base);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-muted) var(--bg-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SELECTION
+   ═══════════════════════════════════════════════════════════════ */
+::selection {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+@layer components {
+
+  /* Container */
+  .container-main {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--section-px);
+  }
+
+  /* Section padding */
+  .section-padding {
+    padding-block: var(--section-py);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #ffffff 0%, #a8a8a8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-dim {
+    background: linear-gradient(135deg, #ededed 0%, #888888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glass card */
+  .glass-card {
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 1rem;
+  }
+
+  /* Glow border */
+  .glow-border {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 0 20px rgba(255, 255, 255, 0.04);
+  }
+
+  /* Pill badge */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    background: rgba(255, 255, 255, 0.06);
+    color: #a8a8a8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Primary button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    background: #ffffff;
+    color: #000000;
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background var(--transition-fast);
+  }
+  .btn-primary:hover {
+    background: #ededed;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: transparent;
+    transition:
+      border-color var(--transition-fast),
+      color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  /* Section heading */
+  .section-heading {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* Overline label above headings */
+  .overline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #a8a8a8;
+  }
+  .overline::before {
+    content: "";
+    display: inline-block;
+    width: 2rem;
+    height: 2px;
+    background: #444444;
+    border-radius: 9999px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPING CURSOR
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: "|";
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 300;
+  color: #a8a8a8;
+  animation: blink-cursor 1s step-end infinite;
+}
+
+/* Status dot pulse */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS VISIBLE
+   ═══════════════════════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE TYPE SCALE
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  :root {
+    --section-px: 2rem;
+    --section-py: 7rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM CURSOR (hide native on desktop with real pointer)
+   ═══════════════════════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  * { cursor: none !important; }
+  a, button { cursor: none !important; }
+}
