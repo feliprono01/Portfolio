@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/providers/MotionProvider";
+import StoreHydrator from "@/providers/StoreHydrator";
 import CursorTrail from "@/components/CursorTrail";
 
 // ─── Google Fonts ─────────────────────────────────────────────────────────────
@@ -110,6 +111,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="bg-bg-primary text-text-primary font-sans antialiased">
+        <StoreHydrator />
         <MotionProvider>{children}</MotionProvider>
         <CursorTrail />
       </body>

@@ -137,10 +137,10 @@ export default function Footer() {
 
         {/* ── Divider ─────────────────────────────────────────────── */}
         <div className="border-t border-border-subtle mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-text-muted text-xs font-mono text-center sm:text-left">
+          <p className="text-text-secondary text-xs font-mono text-center sm:text-left">
             © 2026 Felipe Prono. Todos los derechos reservados.
           </p>
-          <p className="text-text-muted/60 text-xs font-mono">
+          <p className="text-text-secondary text-xs font-mono">
             Diseñado y desarrollado por Felipe Prono
           </p>
         </div>

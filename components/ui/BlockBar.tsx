@@ -19,7 +19,14 @@ export default function BlockBar({ value, total, label }: BlockBarProps) {
           </span>
         </div>
       )}
-      <div className="flex gap-1" role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={total}>
+      <div
+        className="flex gap-1"
+        role="progressbar"
+        aria-label={label ? `${label}: ${value} de ${total}` : `${value} de ${total}`}
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={total}
+      >
         {Array.from({ length: total }, (_, i) => (
           <span
             key={i}
