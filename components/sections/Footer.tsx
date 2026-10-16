@@ -4,6 +4,7 @@ import { m } from "framer-motion";
 import Link from "next/link";
 import { Mail, Phone, ArrowUp } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
+import PixelStrip from "@/components/ui/PixelStrip";
 
 // Brand icons (not available in lucide-react)
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -29,35 +30,17 @@ const navLinks = [
 ];
 
 const socialLinks = [
-  {
-    label: "GitHub",
-    href: "https://github.com/feliprono01",
-    icon: GithubIcon,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/felipe-prono-5b0886173/",
-    icon: LinkedinIcon,
-  },
-  {
-    label: "Email",
-    href: "mailto:felipeprono@gmail.com",
-    icon: Mail,
-  },
-  {
-    label: "Teléfono",
-    href: "tel:+5493424787555",
-    icon: Phone,
-  },
+  { label: "GitHub", href: "https://github.com/feliprono01", icon: GithubIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/felipe-prono-5b0886173/", icon: LinkedinIcon },
+  { label: "Email", href: "mailto:felipeprono@gmail.com", icon: Mail },
+  { label: "Teléfono", href: "tel:+5493424787555", icon: Phone },
 ];
 
 export default function Footer() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 600);
-    };
+    const handleScroll = () => setShowScrollTop(window.scrollY > 600);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -67,11 +50,12 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="relative border-t border-border bg-bg-secondary/50">
-      {/* Subtle glow accent at the top */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    <footer className="relative border-t border-border-subtle bg-bg-secondary/40">
+      <div className="container-main pt-10">
+        <PixelStrip bars={64} className="h-4" />
+      </div>
 
-      <div className="container-main py-16">
+      <div className="container-main py-14">
         {/* ── Top: Logo + Nav + Social ───────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
           {/* Brand */}
@@ -82,10 +66,10 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Link href="#hero" className="inline-block group">
-              <span className="font-display font-extrabold text-2xl tracking-tight">
-                <span className="gradient-text">FP</span>
-                <span className="text-text-muted/60">.</span>
+            <Link href="#hero" className="inline-block">
+              <span className="font-display font-semibold text-lg tracking-wider uppercase">
+                <span className="accent-text">Felipe</span>{" "}
+                <span className="text-text-primary">Prono</span>
               </span>
             </Link>
             <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
@@ -141,7 +125,7 @@ export default function Footer() {
                     target={social.href.startsWith("http") ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="p-2.5 rounded-lg bg-bg-elevated border border-border-default text-text-muted hover:text-white hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300"
+                    className="p-2.5 border border-border-default text-text-muted hover:text-text-primary hover:border-accent-secondary transition-all duration-300 chamfer-sm"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -152,12 +136,12 @@ export default function Footer() {
         </div>
 
         {/* ── Divider ─────────────────────────────────────────────── */}
-        <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-text-muted text-xs text-center sm:text-left">
+        <div className="border-t border-border-subtle mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-text-muted text-xs font-mono text-center sm:text-left">
             © 2026 Felipe Prono. Todos los derechos reservados.
           </p>
-          <p className="text-text-muted/60 text-xs">
-            Diseñado y desarrollado con 🤍
+          <p className="text-text-muted/60 text-xs font-mono">
+            Diseñado y desarrollado por Felipe Prono
           </p>
         </div>
       </div>
@@ -165,7 +149,7 @@ export default function Footer() {
       {/* ── Scroll to top button ───────────────────────────────────── */}
       <m.button
         onClick={scrollToTop}
-        className="fixed bottom-6 right-6 z-50 p-3 rounded-xl bg-white text-black shadow-white hover:bg-gray-200 transition-colors duration-200"
+        className="fixed bottom-6 right-6 z-50 p-3 bg-accent-primary text-bg-primary chamfer-sm hover:brightness-110 transition-[filter] duration-200"
         initial={{ opacity: 0, scale: 0.8, y: 20 }}
         animate={
           showScrollTop

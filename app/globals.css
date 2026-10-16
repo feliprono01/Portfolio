@@ -1,36 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   CSS CUSTOM PROPERTIES
+   THEME TOKENS
+   Dark is the default theme; [data-theme="light"] overrides.
    ═══════════════════════════════════════════════════════════════ */
+:root,
+:root[data-theme="dark"] {
+  /* Neutrals */
+  --color-bg: #1a1814;
+  --color-surface: #211e18;
+  --color-surface-elevated: #2b2720;
+  --color-text-primary: #f2e8d5;
+  --color-text-secondary: #b5a88f;
+  --color-text-muted: #8a8068;
+  --color-border: #4f473a;
+  --color-border-strong: #6b6250;
+
+  /* Accents — used for text/links/icons */
+  --color-accent-primary: #e0a245; /* mustard */
+  --color-accent-secondary: #6e9077; /* sage */
+
+  /* RGB triplets (no #) so Tailwind's opacity modifiers (e.g. bg-bg-primary/40) work */
+  --color-bg-rgb: 26 24 20;
+  --color-surface-rgb: 33 30 24;
+  --color-surface-elevated-rgb: 43 39 32;
+  --color-text-primary-rgb: 242 232 213;
+  --color-text-secondary-rgb: 181 168 143;
+  --color-text-muted-rgb: 138 128 104;
+  --color-border-rgb: 79 71 58;
+  --color-border-strong-rgb: 107 98 80;
+  --color-accent-primary-rgb: 224 162 69;
+  --color-accent-secondary-rgb: 110 144 119;
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f7eedc;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #efe4cc;
+  --color-text-primary: #2b261e;
+  --color-text-secondary: #5a5244;
+  --color-text-muted: #8a8068;
+  --color-border: #d8c9a8;
+  --color-border-strong: #c2ad80;
+
+  /* Darkened variants so text keeps AA contrast on a cream background */
+  --color-accent-primary: #8a5a22; /* dark mustard / rust */
+  --color-accent-secondary: #4f6b57; /* dark sage */
+
+  --color-bg-rgb: 247 238 220;
+  --color-surface-rgb: 255 255 255;
+  --color-surface-elevated-rgb: 239 228 204;
+  --color-text-primary-rgb: 43 38 30;
+  --color-text-secondary-rgb: 90 82 68;
+  --color-text-muted-rgb: 138 128 104;
+  --color-border-rgb: 216 201 168;
+  --color-border-strong-rgb: 194 173 128;
+  --color-accent-primary-rgb: 138 90 34;
+  --color-accent-secondary-rgb: 79 107 87;
+}
+
 :root {
-  /* Colors */
-  --bg-primary:   #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-elevated:  #111111;
-  --bg-muted:     #1a1a1a;
-
-  --text-primary:   #ffffff;
-  --text-secondary: #a8a8a8;
-  --text-muted:     #666666;
-  --text-disabled:  #444444;
-
-  --border:        #2a2a2a;
-  --border-subtle: #1a1a1a;
-
   /* Spacing */
   --section-px: 1.5rem;
   --section-py: 5rem;
   --container-max: 1200px;
-
-  /* Typography */
-  --font-display: "Syne", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: "Libre Baskerville", Georgia, serif;
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -41,6 +76,17 @@
   --z-nav: 100;
   --z-modal: 200;
   --z-tooltip: 300;
+
+  /* Chamfer (cut-corner) size */
+  --chamfer: 14px;
+  --chamfer-sm: 8px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-px: 2rem;
+    --section-py: 7rem;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -61,22 +107,24 @@ html {
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-/* Headings use display font */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   line-height: 1.1;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
 
 a {
@@ -103,29 +151,28 @@ button {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-muted);
+  background: var(--color-border);
   border-radius: 9999px;
   transition: background var(--transition-base);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #444444;
+  background: var(--color-border-strong);
 }
 
-/* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--bg-muted) var(--bg-primary);
+  scrollbar-color: var(--color-border) var(--color-bg);
 }
 
 /* ═══════════════════════════════════════════════════════════════
    SELECTION
    ═══════════════════════════════════════════════════════════════ */
 ::selection {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background-color: var(--color-accent-primary);
+  color: var(--color-bg);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -133,7 +180,6 @@ button {
    ═══════════════════════════════════════════════════════════════ */
 @layer components {
 
-  /* Container */
   .container-main {
     width: 100%;
     max-width: var(--container-max);
@@ -141,41 +187,57 @@ button {
     padding-inline: var(--section-px);
   }
 
-  /* Section padding */
   .section-padding {
     padding-block: var(--section-py);
   }
 
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, #ffffff 0%, #a8a8a8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Text that reads as the mustard/olive accent in both themes */
+  .accent-text {
+    color: var(--color-accent-primary);
+  }
+  .accent-text-secondary {
+    color: var(--color-accent-secondary);
   }
 
-  .gradient-text-dim {
-    background: linear-gradient(135deg, #ededed 0%, #888888 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* ── Chamfered (cut-corner) surface ─────────────────────────────── */
+  .chamfer {
+    clip-path: polygon(
+      var(--chamfer) 0%,
+      100% 0%,
+      100% calc(100% - var(--chamfer)),
+      calc(100% - var(--chamfer)) 100%,
+      0% 100%,
+      0% var(--chamfer)
+    );
+  }
+  .chamfer-sm {
+    clip-path: polygon(
+      var(--chamfer-sm) 0%,
+      100% 0%,
+      100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%,
+      0% 100%,
+      0% var(--chamfer-sm)
+    );
+  }
+  /* Chamfer only the top-left / bottom-right corners (used on cards) */
+  .chamfer-tl-br {
+    clip-path: polygon(
+      var(--chamfer) 0%,
+      100% 0%,
+      100% calc(100% - var(--chamfer)),
+      calc(100% - var(--chamfer)) 100%,
+      0% 100%,
+      0% var(--chamfer)
+    );
   }
 
   /* Glass card */
   .glass-card {
-    background: rgba(10, 10, 10, 0.85);
+    background: color-mix(in srgb, var(--color-surface) 85%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 1rem;
-  }
-
-  /* Glow border */
-  .glow-border {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.06),
-      0 0 20px rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border);
   }
 
   /* Pill badge */
@@ -187,34 +249,44 @@ button {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.05em;
-    background: rgba(255, 255, 255, 0.06);
-    color: #a8a8a8;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--color-surface-elevated);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
   }
 
-  /* Primary button */
+  /* Primary (arcade) button — chamfered, with a chunky "pushable" edge */
   .btn-primary {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.75rem;
-    border-radius: 0.5rem;
+    padding: 0.8rem 1.75rem;
     font-weight: 600;
-    font-size: 0.9375rem;
-    background: #ffffff;
-    color: #000000;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 0.875rem;
+    background: var(--color-accent-primary);
+    color: var(--color-bg);
+    border: 1px solid var(--color-accent-primary);
+    box-shadow: 0 4px 0 0 var(--color-border-strong);
+    clip-path: polygon(
+      var(--chamfer-sm) 0%, 100% 0%, 100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%, 0% 100%, 0% var(--chamfer-sm)
+    );
     transition:
       transform var(--transition-fast),
       box-shadow var(--transition-fast),
-      background var(--transition-fast);
+      filter var(--transition-fast);
   }
   .btn-primary:hover {
-    background: #ededed;
+    filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 0 0 var(--color-border-strong), 0 6px 20px rgba(224, 162, 69, 0.25);
   }
   .btn-primary:active {
-    transform: translateY(0);
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 var(--color-border-strong);
+    filter: brightness(0.95);
   }
 
   /* Ghost button */
@@ -222,34 +294,43 @@ button {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1.75rem;
-    border-radius: 0.5rem;
+    padding: 0.8rem 1.75rem;
     font-weight: 600;
-    font-size: 0.9375rem;
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
     background: transparent;
+    clip-path: polygon(
+      var(--chamfer-sm) 0%, 100% 0%, 100% calc(100% - var(--chamfer-sm)),
+      calc(100% - var(--chamfer-sm)) 100%, 0% 100%, 0% var(--chamfer-sm)
+    );
     transition:
       border-color var(--transition-fast),
       color var(--transition-fast),
       transform var(--transition-fast);
   }
   .btn-ghost:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    color: #ffffff;
+    border-color: var(--color-accent-secondary);
+    color: var(--color-text-primary);
     transform: translateY(-2px);
   }
-
-  /* Section heading */
-  .section-heading {
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-weight: 700;
-    font-family: var(--font-serif);
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+  .btn-ghost:active {
+    transform: translateY(1px);
   }
 
-  /* Overline label above headings */
+  /* Section heading with code-bracket wrapper: < TITLE /> */
+  .section-heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 600;
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
   .overline {
     display: inline-flex;
     align-items: center;
@@ -258,33 +339,33 @@ button {
     font-weight: 600;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #a8a8a8;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
   }
   .overline::before {
     content: "";
     display: inline-block;
     width: 2rem;
     height: 2px;
-    background: #444444;
-    border-radius: 9999px;
+    background: var(--color-accent-secondary);
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════
    TYPING CURSOR
    ═══════════════════════════════════════════════════════════════ */
-@keyframes blink-cursor {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
 .typing-cursor::after {
   content: "|";
   display: inline-block;
   margin-left: 2px;
-  font-weight: 300;
-  color: #a8a8a8;
+  font-weight: 400;
+  color: var(--color-accent-primary);
   animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Status dot pulse */
@@ -298,7 +379,7 @@ button {
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background-color: #22c55e;
+  background-color: var(--color-accent-secondary);
   animation: pulse-dot 2s ease-in-out infinite;
 }
 
@@ -306,19 +387,8 @@ button {
    FOCUS VISIBLE
    ═══════════════════════════════════════════════════════════════ */
 :focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline: 2px solid var(--color-accent-primary);
   outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE TYPE SCALE
-   ═══════════════════════════════════════════════════════════════ */
-@media (min-width: 1024px) {
-  :root {
-    --section-px: 2rem;
-    --section-py: 7rem;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -327,4 +397,16 @@ button {
 @media (hover: hover) and (pointer: fine) {
   * { cursor: none !important; }
   a, button { cursor: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

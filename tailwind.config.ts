@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,47 +9,66 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // ─── Google Fonts ────────────────────────────────────────────────
+      // ─── Fonts ───────────────────────────────────────────────────────
       fontFamily: {
-        display: ["var(--font-syne)", "system-ui", "sans-serif"],
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
-        serif: ["var(--font-serif)", "Georgia", "serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
 
       // ─── Color Palette ───────────────────────────────────────────────
+      // Semantic tokens use rgb(var(..) / <alpha-value>) so Tailwind's
+      // opacity modifiers (bg-bg-primary/40) resolve correctly while the
+      // underlying values still swap between light/dark via CSS vars.
       colors: {
         bg: {
-          primary:   "#000000",
-          secondary: "#0a0a0a",
-          elevated:  "#111111",
-          muted:     "#1a1a1a",
+          primary: "rgb(var(--color-bg-rgb) / <alpha-value>)",
+          secondary: "rgb(var(--color-surface-rgb) / <alpha-value>)",
+          elevated: "rgb(var(--color-surface-elevated-rgb) / <alpha-value>)",
+          muted: "rgb(var(--color-surface-elevated-rgb) / <alpha-value>)",
         },
         text: {
-          primary:   "#ffffff",
-          secondary: "#a8a8a8",
-          muted:     "#666666",
-          disabled:  "#444444",
+          primary: "rgb(var(--color-text-primary-rgb) / <alpha-value>)",
+          secondary: "rgb(var(--color-text-secondary-rgb) / <alpha-value>)",
+          muted: "rgb(var(--color-text-muted-rgb) / <alpha-value>)",
+          disabled: "rgb(var(--color-text-muted-rgb) / <alpha-value>)",
         },
         border: {
-          subtle:  "#1a1a1a",
-          default: "#2a2a2a",
-          strong:  "#444444",
-          white:   "#ffffff",
+          subtle: "rgb(var(--color-border-rgb) / <alpha-value>)",
+          default: "rgb(var(--color-border-rgb) / <alpha-value>)",
+          strong: "rgb(var(--color-border-strong-rgb) / <alpha-value>)",
+          white: "rgb(var(--color-text-primary-rgb) / <alpha-value>)",
         },
+        surface: "rgb(var(--color-surface-rgb) / <alpha-value>)",
+        accent: {
+          primary: "rgb(var(--color-accent-primary-rgb) / <alpha-value>)",
+          secondary: "rgb(var(--color-accent-secondary-rgb) / <alpha-value>)",
+        },
+
+        // Raw arcade palette — fixed across themes, used for decoration
+        arcade: {
+          mustard: "#E0A245",
+          sage: "#6E9077",
+          sand: "#F5C97A",
+          rust: "#9D6A3D",
+          olive: "#5E5E3A",
+          brown: "#4F473A",
+        },
+
+        // Neutral ramp kept for existing components, retuned warm
         gray: {
-          50:  "#f9f9f9",
-          100: "#ededed",
-          200: "#d4d4d4",
-          300: "#b0b0b0",
-          400: "#888888",
-          500: "#666666",
-          600: "#444444",
-          700: "#2a2a2a",
-          800: "#1a1a1a",
-          900: "#111111",
-          950: "#0a0a0a",
+          50: "var(--color-text-primary)",
+          100: "var(--color-text-primary)",
+          200: "var(--color-text-secondary)",
+          300: "var(--color-text-secondary)",
+          400: "var(--color-text-muted)",
+          500: "var(--color-text-muted)",
+          600: "var(--color-border-strong)",
+          700: "var(--color-border)",
+          800: "var(--color-surface-elevated)",
+          900: "var(--color-surface)",
+          950: "var(--color-bg)",
         },
-        surface: "#111111",
       },
 
       // ─── Border Radius ───────────────────────────────────────────────
@@ -61,10 +80,11 @@ const config: Config = {
 
       // ─── Box Shadows ─────────────────────────────────────────────────
       boxShadow: {
-        card:      "0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)",
-        "card-lg": "0 4px 24px rgba(0,0,0,0.6)",
-        inset:     "inset 0 1px 0 rgba(255,255,255,0.05)",
-        white:     "0 0 20px rgba(255,255,255,0.08), 0 0 60px rgba(255,255,255,0.03)",
+        card: "0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.25)",
+        "card-lg": "0 4px 24px rgba(0,0,0,0.5)",
+        inset: "inset 0 1px 0 rgba(255,255,255,0.04)",
+        mustard: "0 0 24px rgba(224,162,69,0.25)",
+        sage: "0 0 24px rgba(110,144,119,0.25)",
       },
 
       // ─── Keyframes & Animations ──────────────────────────────────────
@@ -77,39 +97,28 @@ const config: Config = {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
-        blob: {
-          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
-          "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-          "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+        "pixel-wave": {
+          "0%, 100%": { transform: "scaleY(0.4)" },
+          "50%": { transform: "scaleY(1)" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "200% 0" },
-          "100%": { backgroundPosition: "-200% 0" },
-        },
-        "shimmer-white": {
-          "0%":   { backgroundPosition: "200% 0" },
-          "100%": { backgroundPosition: "-200% 0" },
+        "blink-cursor": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
         },
       },
       animation: {
         "fade-up": "fade-up 0.6s ease-out forwards",
         "fade-in": "fade-in 0.5s ease-out forwards",
-        blob: "blob 8s ease-in-out infinite",
-        "blob-slow": "blob 12s ease-in-out infinite",
-        shimmer: "shimmer 3s linear infinite",
-        "shimmer-white": "shimmer-white 3s linear infinite",
+        "pixel-wave": "pixel-wave 1.6s ease-in-out infinite",
+        "blink-cursor": "blink-cursor 1s step-end infinite",
       },
 
-      // ─── Background Gradients ────────────────────────────────────────
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "hero-grid":
-          "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+        "octa-pattern":
+          "radial-gradient(circle, var(--color-border) 1px, transparent 1.5px)",
       },
       backgroundSize: {
-        grid: "60px 60px",
+        octa: "18px 18px",
       },
     },
   },

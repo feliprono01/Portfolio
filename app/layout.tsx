@@ -1,26 +1,47 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Inter } from "next/font/google";
+import { Chakra_Petch, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/providers/MotionProvider";
 import CursorTrail from "@/components/CursorTrail";
 
 // ─── Google Fonts ─────────────────────────────────────────────────────────────
-const syne = Syne({
+const chakraPetch = Chakra_Petch({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
+  variable: "--font-sans",
   display: "swap",
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+// ─── Theme init (avoids flash of wrong theme) ──────────────────────────────────
+const themeInitScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var theme = stored === "light" || stored === "dark" ? stored : "dark";
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+`;
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://felipeprono.dev"),
   title: {
     default: "Felipe Prono — Desarrollador de Software",
     template: "%s | Felipe Prono",
@@ -68,7 +89,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#09090b",
+  themeColor: "#1A1814",
   width: "device-width",
   initialScale: 1,
 };
@@ -82,9 +103,12 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`dark ${syne.variable} ${inter.variable}`}
+      className={`${chakraPetch.variable} ${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="bg-bg-primary text-text-primary font-sans antialiased">
         <MotionProvider>{children}</MotionProvider>
         <CursorTrail />

@@ -1,36 +1,41 @@
 "use client";
 
 import { m } from "framer-motion";
+import { Gamepad2, ArrowRight } from "lucide-react";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
-import ParticleFieldClient from "@/components/webgl/ParticleField.client";
+import ChamferBox from "@/components/ui/ChamferBox";
+import Chip from "@/components/ui/Chip";
+import OctaPattern from "@/components/ui/OctaPattern";
+import PixelStrip from "@/components/ui/PixelStrip";
 
 /* ─── Animation variants ──────────────────────────────────────────────────── */
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.15, delayChildren: 0.25 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.7,
+      duration: 0.6,
       ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
 };
 
-/* ─── Stats data ──────────────────────────────────────────────────────────── */
+/* ─── Data ─────────────────────────────────────────────────────────────────── */
 const stats = [
   { value: 1, suffix: "+", label: "Años de experiencia" },
   { value: 4, suffix: "+", label: "Proyectos completados" },
 ];
 
-/* ─── Social links ────────────────────────────────────────────────────────── */
+const stack = ["React", "Spring Boot", "Java", "MySQL"];
+
 const socials = [
   {
     label: "GitHub",
@@ -52,95 +57,90 @@ const socials = [
   },
 ];
 
+/* ─── Decorative dot grid (echoes the reference's divider icon) ─────────────── */
+function DotGrid() {
+  return (
+    <span
+      className="grid grid-cols-3 gap-[3px] shrink-0"
+      aria-hidden="true"
+    >
+      {Array.from({ length: 9 }, (_, i) => (
+        <span key={i} className="w-[4px] h-[4px] bg-accent-secondary" />
+      ))}
+    </span>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative min-h-screen flex items-center overflow-hidden pt-28 pb-20"
     >
-      {/* ── WebGL particle field ───────────────────────────────────────── */}
-      <ParticleFieldClient />
-
       {/* ── Background layers ──────────────────────────────────────────── */}
-      {/* Grid pattern */}
       <div
-        className="absolute inset-0 bg-hero-grid bg-grid opacity-40 pointer-events-none"
+        className="absolute inset-0 bg-octa-pattern bg-octa opacity-[0.12] pointer-events-none"
         aria-hidden="true"
       />
-
-      {/* Radial white glow behind content */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] opacity-60 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.06) 0%, transparent 70%)' }}
-        aria-hidden="true"
-      />
-
-      {/* Floating gradient orbs */}
-      <div
-        className="absolute -top-40 -left-40 w-[420px] h-[420px] rounded-full bg-white/[0.04] blur-[100px] animate-blob pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -bottom-24 -right-24 w-[360px] h-[360px] rounded-full bg-white/[0.03] blur-[100px] animate-blob-slow pointer-events-none"
-        style={{ animationDelay: "3s" }}
-        aria-hidden="true"
-      />
-      {/* Extra subtle orb */}
-      <div
-        className="absolute top-1/4 right-1/4 w-60 h-60 rounded-full bg-white/[0.03] blur-[80px] animate-blob-slow pointer-events-none"
-        style={{ animationDelay: "5s" }}
-        aria-hidden="true"
-      />
+      <OctaPattern className="absolute top-24 right-6 opacity-50 hidden md:block pointer-events-none" />
 
       {/* ── Content ────────────────────────────────────────────────────── */}
-      <div className="container-main relative z-10 pt-28 pb-20">
+      <div className="container-main relative z-10 w-full">
         <m.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="max-w-3xl"
         >
-          {/* Overline / Status badge */}
-          <m.div variants={itemVariants} className="mb-8">
-            <span className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-white/[0.06] text-gray-300 border border-white/10">
+          {/* Status badge */}
+          <m.div variants={itemVariants} className="mb-6">
+            <span className="pill">
               <span className="status-dot" />
               Disponible para trabajar
             </span>
           </m.div>
 
-          {/* Heading */}
-          <m.h1
-            variants={itemVariants}
-            className="font-serif font-bold mb-2"
-            style={{
-              fontSize: "clamp(2.75rem, 7vw, 5.25rem)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-            }}
-          >
-            Hola, soy
-          </m.h1>
-
-          <m.h1
-            variants={itemVariants}
-            className="gradient-text font-serif font-bold mb-5"
-            style={{
-              fontSize: "clamp(2.75rem, 7vw, 5.25rem)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-            }}
-          >
-            Felipe Prono
-          </m.h1>
-
-          {/* Role with typing cursor */}
+          {/* Overline */}
           <m.p
             variants={itemVariants}
-            className="typing-cursor text-lg sm:text-xl md:text-2xl font-display font-semibold text-gray-300 mb-6"
+            className="font-mono text-sm text-text-secondary mb-3 tracking-wide"
           >
-            Desarrollador de Software
+            Hola, soy Felipe Prono —
           </m.p>
+
+          {/* Headline row 1: SOFTWARE + dots + controls capsule */}
+          <m.div
+            variants={itemVariants}
+            className="flex flex-wrap items-center gap-4 mb-1"
+          >
+            <h1
+              className="font-display font-bold uppercase text-text-primary leading-none"
+              style={{ fontSize: "clamp(2.5rem, 7vw, 4.75rem)", letterSpacing: "-0.01em" }}
+            >
+              Software
+            </h1>
+            <DotGrid />
+            <ChamferBox accent="primary" className="px-4 py-3 inline-flex items-center">
+              <Gamepad2 className="w-6 h-6 accent-text" strokeWidth={1.75} />
+            </ChamferBox>
+          </m.div>
+
+          {/* Headline row 2: DEVELOPER */}
+          <m.h1
+            variants={itemVariants}
+            className="font-display font-bold uppercase accent-text leading-none mb-7"
+            style={{ fontSize: "clamp(2.5rem, 7vw, 4.75rem)", letterSpacing: "-0.01em" }}
+          >
+            Developer
+          </m.h1>
+
+          {/* Stack chips */}
+          <m.div variants={itemVariants} className="flex flex-wrap gap-2 mb-8">
+            {stack.map((tech) => (
+              <Chip key={tech}>{tech}</Chip>
+            ))}
+          </m.div>
 
           {/* Description */}
           <m.p
@@ -154,26 +154,10 @@ export default function Hero() {
           </m.p>
 
           {/* CTA buttons */}
-          <m.div
-            variants={itemVariants}
-            className="flex flex-wrap gap-4 mb-12"
-          >
+          <m.div variants={itemVariants} className="flex flex-wrap gap-4 mb-12">
             <a href="#projects" className="btn-primary group">
               Ver proyectos
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
             </a>
             <a href="#contact" className="btn-ghost">
               Contactar
@@ -181,20 +165,13 @@ export default function Hero() {
           </m.div>
 
           {/* Stats strip */}
-          <m.div
-            variants={itemVariants}
-            className="flex flex-wrap gap-8 sm:gap-12 mb-10"
-          >
+          <m.div variants={itemVariants} className="flex flex-wrap gap-8 sm:gap-12 mb-10">
             {stats.map((stat) => (
               <div key={stat.label} className="flex flex-col">
-                <span className="text-3xl sm:text-4xl font-display font-extrabold text-text-primary">
-                  <AnimatedCounter
-                    to={stat.value}
-                    suffix={stat.suffix}
-                    duration={2}
-                  />
+                <span className="text-3xl sm:text-4xl font-display font-bold text-text-primary">
+                  <AnimatedCounter to={stat.value} suffix={stat.suffix} duration={2} />
                 </span>
-                <span className="text-xs sm:text-sm text-text-muted mt-1 tracking-wide">
+                <span className="text-xs sm:text-sm font-mono text-text-muted mt-1 tracking-wide">
                   {stat.label}
                 </span>
               </div>
@@ -202,7 +179,7 @@ export default function Hero() {
           </m.div>
 
           {/* Social links */}
-          <m.div variants={itemVariants} className="flex gap-3">
+          <m.div variants={itemVariants} className="flex gap-3 mb-14">
             {socials.map((social) => (
               <a
                 key={social.label}
@@ -210,29 +187,18 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="p-2.5 rounded-lg border border-border-default text-text-muted hover:text-white hover:border-white/20 hover:bg-white/[0.04] transition-all duration-300"
+                className="p-2.5 border border-border-default text-text-muted hover:text-text-primary hover:border-accent-secondary transition-all duration-300 chamfer-sm"
               >
                 {social.icon}
               </a>
             ))}
           </m.div>
-        </m.div>
-      </div>
 
-      {/* ── Scroll indicator ───────────────────────────────────────────── */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-muted z-10">
-        <span className="text-[10px] uppercase tracking-[0.25em] font-medium">
-          Scroll
-        </span>
-        <m.div
-          className="w-px h-8 bg-gradient-to-b from-white/60 to-transparent"
-          animate={{ scaleY: [0, 1, 0], originY: 0 }}
-          transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+          {/* Pixel strip */}
+          <m.div variants={itemVariants}>
+            <PixelStrip bars={56} />
+          </m.div>
+        </m.div>
       </div>
     </section>
   );

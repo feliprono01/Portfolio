@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@react-three/drei": "^9.122.0",
-    "@react-three/fiber": "^8.18.0",
     "framer-motion": "^11.0.8",
     "lucide-react": "^1.7.0",
     "next": "14.2.3",
@@ -19,14 +17,12 @@
     "react-dom": "^18",
     "react-hook-form": "^7.72.0",
     "resend": "^6.10.0",
-    "three": "^0.183.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/three": "^0.183.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
