@@ -41,7 +41,7 @@ const themeInitScript = `
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://felipeprono.dev"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://felipeprono.vercel.app"),
   title: {
     default: "Felipe Prono — Desarrollador de Software",
     template: "%s | Felipe Prono",
