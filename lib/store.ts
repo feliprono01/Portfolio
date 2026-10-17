@@ -9,9 +9,14 @@ interface AppState {
   soundEnabled: boolean;
   crtEnabled: boolean;
   achievements: string[];
+  /** False until the persisted store has been read from localStorage — gates
+   *  anything (like achievement-watching) that must not run on stale/default
+   *  state and double-fire for returning visitors. */
+  hydrated: boolean;
   setSkin: (skin: SkinId) => void;
   toggleSound: () => void;
   toggleCrt: () => void;
+  setHydrated: () => void;
   /** Returns true only the first time an achievement is unlocked. */
   unlock: (id: string) => boolean;
 }
@@ -23,9 +28,11 @@ export const useAppStore = create<AppState>()(
       soundEnabled: false,
       crtEnabled: true,
       achievements: [],
+      hydrated: false,
       setSkin: (skin) => set({ skin }),
       toggleSound: () => set((s) => ({ soundEnabled: !s.soundEnabled })),
       toggleCrt: () => set((s) => ({ crtEnabled: !s.crtEnabled })),
+      setHydrated: () => set({ hydrated: true }),
       unlock: (id) => {
         if (get().achievements.includes(id)) return false;
         set((s) => ({ achievements: [...s.achievements, id] }));

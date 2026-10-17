@@ -13,6 +13,8 @@ import StoreHydrator from "@/providers/StoreHydrator";
 import CrtOverlay from "@/components/fx/CrtOverlay";
 import PixelCursor from "@/components/fx/PixelCursor";
 import BootScreen from "@/components/fx/BootScreen";
+import AchievementToast from "@/components/fx/AchievementToast";
+import ClickSfx from "@/components/fx/ClickSfx";
 import { DEFAULT_SKIN, SKIN_IDS } from "@/lib/skins";
 import { STORE_KEY } from "@/lib/store";
 
@@ -131,6 +133,8 @@ export default function RootLayout({
         <CrtOverlay />
         <PixelCursor />
         <BootScreen />
+        <AchievementToast />
+        <ClickSfx />
       </body>
     </html>
   );

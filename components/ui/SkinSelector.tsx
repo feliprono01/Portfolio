@@ -1,10 +1,55 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Tv } from "lucide-react";
 import { SKINS } from "@/lib/skins";
 import { isLowEndDevice } from "@/lib/device";
 import { useAppStore } from "@/lib/store";
+
+function SettingSwitch({
+  label,
+  hint,
+  checked,
+  disabled,
+  onChange,
+}: {
+  label: ReactNode;
+  hint?: ReactNode;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-3 border-t border-border-default px-1 pt-3 text-sm text-text-secondary has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent-primary">
+      <span>
+        {label}
+        {hint && <span className="block text-[11px] text-text-muted">{hint}</span>}
+      </span>
+      <input
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        disabled={disabled}
+        onChange={onChange}
+        className="sr-only"
+      />
+      <span
+        aria-hidden="true"
+        className={`flex h-5 w-10 shrink-0 items-center border border-border-strong px-0.5 transition-colors ${
+          checked ? "bg-accent-primary" : "bg-bg-elevated"
+        }`}
+      >
+        <span
+          className="block h-3.5 w-3.5 transition-transform"
+          style={{
+            transform: checked ? "translateX(18px)" : "translateX(0)",
+            backgroundColor: checked ? "var(--color-bg)" : "var(--color-text-muted)",
+          }}
+        />
+      </span>
+    </label>
+  );
+}
 
 export default function SkinSelector() {
   const [open, setOpen] = useState(false);
@@ -17,6 +62,8 @@ export default function SkinSelector() {
   const setSkin = useAppStore((s) => s.setSkin);
   const crtEnabled = useAppStore((s) => s.crtEnabled);
   const toggleCrt = useAppStore((s) => s.toggleCrt);
+  const soundEnabled = useAppStore((s) => s.soundEnabled);
+  const toggleSound = useAppStore((s) => s.toggleSound);
 
   const current = SKINS.find((s) => s.id === skin) ?? SKINS[0];
 
@@ -95,33 +142,16 @@ export default function SkinSelector() {
             </div>
           </fieldset>
 
-          <label className="mt-3 flex cursor-pointer items-center justify-between gap-3 border-t border-border-default px-1 pt-3 text-sm text-text-secondary has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent-primary">
-            <span>
-              Efecto CRT
-              {lowEnd && (
-                <span className="block text-[11px] text-text-muted">Desactivado en este dispositivo</span>
-              )}
-            </span>
-            <input
-              type="checkbox"
-              role="switch"
+          <div className="mt-3 space-y-0">
+            <SettingSwitch
+              label="Efecto CRT"
+              hint={lowEnd ? "Desactivado en este dispositivo" : undefined}
               checked={crtEnabled && !lowEnd}
               disabled={lowEnd}
               onChange={toggleCrt}
-              className="sr-only"
             />
-            <span
-              aria-hidden="true"
-              className={`flex h-5 w-10 items-center border border-border-strong px-0.5 transition-colors ${
-                crtEnabled && !lowEnd ? "bg-accent-primary" : "bg-bg-elevated"
-              }`}
-            >
-              <span
-                className="block h-3.5 w-3.5 bg-bg-primary transition-transform"
-                style={{ transform: crtEnabled && !lowEnd ? "translateX(18px)" : "translateX(0)", backgroundColor: crtEnabled && !lowEnd ? "var(--color-bg)" : "var(--color-text-muted)" }}
-              />
-            </span>
-          </label>
+            <SettingSwitch label="Sonido" checked={soundEnabled} onChange={toggleSound} />
+          </div>
         </div>
       )}
     </div>

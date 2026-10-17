@@ -566,3 +566,29 @@ html.pixel-cursor-on * {
 @keyframes boot-fade-out {
   to { opacity: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   KONAMI GLITCH BURST
+   Brief, skippable under reduced-motion (the burst still applies a
+   one-off hue shift so the easter egg still visibly "landed").
+   ═══════════════════════════════════════════════════════════════ */
+html.glitch-burst body {
+  animation: glitch-jitter 180ms steps(2, end) 8;
+}
+
+@keyframes glitch-jitter {
+  0%   { transform: translate(0, 0); filter: hue-rotate(0deg); }
+  20%  { transform: translate(-3px, 2px); filter: hue-rotate(40deg); }
+  40%  { transform: translate(3px, -1px); filter: hue-rotate(-30deg); }
+  60%  { transform: translate(-2px, -2px); filter: hue-rotate(20deg); }
+  80%  { transform: translate(2px, 1px); filter: hue-rotate(-15deg); }
+  100% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.glitch-burst body {
+    animation: none;
+    filter: hue-rotate(40deg);
+    transition: filter 1.4s ease 0.2s;
+  }
+}

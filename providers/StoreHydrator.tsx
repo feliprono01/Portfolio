@@ -18,8 +18,10 @@ function applySkin(skin: SkinId) {
  */
 export default function StoreHydrator() {
   useEffect(() => {
-    useAppStore.persist.rehydrate();
-    applySkin(useAppStore.getState().skin);
+    Promise.resolve(useAppStore.persist.rehydrate()).finally(() => {
+      applySkin(useAppStore.getState().skin);
+      useAppStore.getState().setHydrated();
+    });
     return useAppStore.subscribe((state, prev) => {
       if (state.skin !== prev.skin) applySkin(state.skin);
     });
