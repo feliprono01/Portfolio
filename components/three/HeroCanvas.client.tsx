@@ -4,10 +4,12 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { useWebGL } from "@/hooks/useWebGL";
 import { useSkinColors } from "@/hooks/useSkinColors";
+import { useAppStore } from "@/lib/store";
 import MonitorFallback from "./MonitorFallback";
 
 const Canvas = dynamic(() => import("@react-three/fiber").then((m) => m.Canvas), { ssr: false });
 const RetroMonitor = dynamic(() => import("./RetroMonitor"), { ssr: false });
+const CrtPostFx = dynamic(() => import("./CrtPostFx"), { ssr: false });
 
 /**
  * Hero's 3D scene: WebGL support, reduced-motion and low-end devices all
@@ -17,6 +19,7 @@ const RetroMonitor = dynamic(() => import("./RetroMonitor"), { ssr: false });
 export default function HeroCanvasClient() {
   const { shouldRender, isMobile } = useWebGL();
   const colors = useSkinColors();
+  const crtEnabled = useAppStore((s) => s.crtEnabled);
 
   // Same footprint either way, so swapping the fallback for the real
   // canvas (once WebGL support is confirmed and the browser is idle)
@@ -34,6 +37,7 @@ export default function HeroCanvasClient() {
             <directionalLight position={[3, 4, 5]} intensity={1.1} />
             <directionalLight position={[-3, -2, -4]} intensity={0.25} />
             <RetroMonitor colors={colors} autoRotate={!isMobile} />
+            {crtEnabled && <CrtPostFx />}
           </Canvas>
         </Suspense>
       ) : (
