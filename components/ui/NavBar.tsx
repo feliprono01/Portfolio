@@ -94,7 +94,7 @@ export default function NavBar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      <nav className="container-main flex items-center justify-between h-[4.25rem]">
+      <nav aria-label="Navegación principal" className="container-main flex items-center justify-between h-[4.25rem]">
         {/* ── Logo ────────────────────────────────────────────────────── */}
         <Link href="#hero" className="group select-none" onClick={handleNavClick}>
           <span className="font-display font-bold text-sm sm:text-base tracking-wider uppercase">
@@ -108,9 +108,18 @@ export default function NavBar() {
           {navLinks.map((link) => {
             const isActive = activeSection === link.href.replace("#", "");
             return (
-              <li key={link.href}>
+              <li key={link.href} className="relative">
+                {isActive && (
+                  <span
+                    className="absolute -left-3.5 top-1/2 -translate-y-1/2 accent-text animate-blink-cursor"
+                    aria-hidden="true"
+                  >
+                    ▶
+                  </span>
+                )}
                 <Link
                   href={link.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={`relative text-xs font-mono font-medium uppercase tracking-wide transition-colors duration-200 pb-1 ${
                     isActive
                       ? "text-text-primary"
@@ -213,10 +222,17 @@ export default function NavBar() {
                       closed: { opacity: 0, y: -16, filter: "blur(4px)" },
                     }}
                     transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center gap-2"
                   >
+                    {isActive && (
+                      <span className="accent-text animate-blink-cursor" aria-hidden="true">
+                        ▶
+                      </span>
+                    )}
                     <Link
                       href={link.href}
                       onClick={handleNavClick}
+                      aria-current={isActive ? "page" : undefined}
                       className={`block text-2xl font-display font-semibold uppercase py-1 transition-colors duration-200 ${
                         isActive ? "accent-text" : "text-text-secondary hover:text-text-primary"
                       }`}

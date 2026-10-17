@@ -7,6 +7,7 @@ import ChamferBox from "@/components/ui/ChamferBox";
 import Chip from "@/components/ui/Chip";
 import OctaPattern from "@/components/ui/OctaPattern";
 import PixelStrip from "@/components/ui/PixelStrip";
+import HeroCanvasClient from "@/components/three/HeroCanvas.client";
 
 /* ─── Animation variants ──────────────────────────────────────────────────── */
 const containerVariants = {
@@ -86,12 +87,12 @@ export default function Hero() {
       <OctaPattern className="absolute top-24 right-6 opacity-50 hidden md:block pointer-events-none" />
 
       {/* ── Content ────────────────────────────────────────────────────── */}
-      <div className="container-main relative z-10 w-full">
+      <div className="container-main relative z-10 w-full flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-6">
         <m.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-3xl"
+          className="max-w-3xl lg:flex-1"
         >
           {/* Status badge */}
           <m.div variants={itemVariants} className="mb-6">
@@ -194,6 +195,16 @@ export default function Hero() {
           <m.div variants={itemVariants}>
             <PixelStrip bars={56} />
           </m.div>
+        </m.div>
+
+        {/* Retro monitor — decorative; the content above already carries everything it shows */}
+        <m.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:flex-1 lg:max-w-md"
+        >
+          <HeroCanvasClient />
         </m.div>
       </div>
     </section>

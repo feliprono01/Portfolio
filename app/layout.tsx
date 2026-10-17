@@ -12,6 +12,7 @@ import MotionProvider from "@/providers/MotionProvider";
 import StoreHydrator from "@/providers/StoreHydrator";
 import CrtOverlay from "@/components/fx/CrtOverlay";
 import PixelCursor from "@/components/fx/PixelCursor";
+import BootScreen from "@/components/fx/BootScreen";
 import { DEFAULT_SKIN, SKIN_IDS } from "@/lib/skins";
 import { STORE_KEY } from "@/lib/store";
 
@@ -129,6 +130,7 @@ export default function RootLayout({
         <MotionProvider>{children}</MotionProvider>
         <CrtOverlay />
         <PixelCursor />
+        <BootScreen />
       </body>
     </html>
   );

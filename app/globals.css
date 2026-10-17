@@ -559,3 +559,10 @@ html.pixel-cursor-on * {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT SCREEN
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes boot-fade-out {
+  to { opacity: 0; }
+}
