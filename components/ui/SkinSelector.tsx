@@ -64,6 +64,8 @@ export default function SkinSelector() {
   const toggleCrt = useAppStore((s) => s.toggleCrt);
   const soundEnabled = useAppStore((s) => s.soundEnabled);
   const toggleSound = useAppStore((s) => s.toggleSound);
+  const musicEnabled = useAppStore((s) => s.musicEnabled);
+  const toggleMusic = useAppStore((s) => s.toggleMusic);
 
   const current = SKINS.find((s) => s.id === skin) ?? SKINS[0];
 
@@ -151,6 +153,7 @@ export default function SkinSelector() {
               onChange={toggleCrt}
             />
             <SettingSwitch label="Sonido" checked={soundEnabled} onChange={toggleSound} />
+            <SettingSwitch label="Música" checked={musicEnabled} onChange={toggleMusic} />
           </div>
         </div>
       )}

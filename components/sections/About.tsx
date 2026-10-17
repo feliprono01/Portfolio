@@ -7,7 +7,7 @@ import OctaIcon from "@/components/ui/OctaIcon";
 import BlockBar from "@/components/ui/BlockBar";
 import { m, useInView } from "framer-motion";
 import { useRef, type ReactNode } from "react";
-import { MapPin, GraduationCap, Clock, Languages, Download, ArrowRight } from "lucide-react";
+import { MapPin, GraduationCap, Clock, Languages, Download, ArrowRight, Save } from "lucide-react";
 import {
   CHARACTER,
   PHILOSOPHY_PARAGRAPHS,
@@ -192,13 +192,20 @@ export default function About() {
             <m.a
               href="/CV_Felipe_Prono.pdf"
               download
-              className="btn-ghost inline-flex mt-8"
+              className="group inline-flex items-center gap-3 mt-8 border border-border-strong bg-bg-elevated p-3 pr-5 chamfer-sm hover:border-accent-primary transition-colors"
               variants={fadeUp}
               whileHover={{ y: -2 }}
               whileTap={{ y: 0 }}
             >
-              Descargar CV
-              <Download className="w-4 h-4" strokeWidth={1.75} />
+              <span className="flex items-center justify-center w-9 h-9 bg-accent-primary text-bg-primary chamfer-sm shrink-0 group-hover:brightness-110 transition-[filter]">
+                <Save className="w-4 h-4" strokeWidth={1.75} />
+              </span>
+              <span>
+                <span className="block font-mono text-sm text-text-primary">felipe_prono.sav</span>
+                <span className="block font-mono text-[10px] text-text-muted uppercase tracking-wide">
+                  Descargar CV (PDF) <Download className="inline w-2.5 h-2.5 ml-0.5" strokeWidth={2} />
+                </span>
+              </span>
             </m.a>
           </m.div>
 
