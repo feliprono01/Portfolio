@@ -154,7 +154,7 @@ export default function Skills() {
             en proyectos reales, no de una autoevaluación.
           </m.p>
           <m.p
-            className="font-mono text-xs text-text-muted mt-3 flex items-center justify-center gap-4"
+            className="font-mono text-xs text-text-muted mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5"
             variants={headingVariants}
           >
             <span className="flex items-center gap-1.5">
