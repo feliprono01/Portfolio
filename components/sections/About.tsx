@@ -6,50 +6,23 @@ import ChamferBox from "@/components/ui/ChamferBox";
 import OctaIcon from "@/components/ui/OctaIcon";
 import BlockBar from "@/components/ui/BlockBar";
 import { m, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { MapPin, GraduationCap, Clock, Languages, Download, ArrowRight } from "lucide-react";
+import {
+  PHILOSOPHY_PARAGRAPHS,
+  PERSONAL_INFO,
+  EDUCATION,
+  CERT_SUMMARY,
+  type PersonalInfoIcon,
+} from "@/content/about";
+import { getSection } from "@/content/sections";
 
-/* ─── Data ────────────────────────────────────────────────────── */
-
-const personalInfo = [
-  { icon: <MapPin className="w-4 h-4" strokeWidth={1.75} />, label: "Ubicación", value: "Santa Fe, Argentina" },
-  { icon: <GraduationCap className="w-4 h-4" strokeWidth={1.75} />, label: "Formación", value: "IES — Tec. Desarrollo de Software" },
-  { icon: <Clock className="w-4 h-4" strokeWidth={1.75} />, label: "Disponibilidad", value: "Full-time · Sin restricción horaria" },
-  { icon: <Languages className="w-4 h-4" strokeWidth={1.75} />, label: "Idiomas", value: "Español nativo · Inglés avanzado" },
-];
-
-interface EducationEntry {
-  institution: string;
-  career: string;
-  dates: string;
-  status: "En curso" | "En pausa";
-  description: string;
-  progress?: number;
-  subjectsApproved?: number;
-  subjectsTotal?: number;
-}
-
-const education: EducationEntry[] = [
-  {
-    institution: "IES (Instituto de Educación Superior)",
-    career: "Tecnicatura Superior en Desarrollo de Software",
-    dates: "2024 — 2026",
-    progress: 70,
-    status: "En curso",
-    description:
-      "Formación técnica superior en algoritmos, estructuras de datos, POO, bases de datos y arquitectura de software. Inglés técnico B2 integrado.",
-  },
-  {
-    institution: "ISPC (Instituto Superior Politécnico de Córdoba)",
-    career: "Tecnicatura Superior en Desarrollo Web y Aplicaciones Móviles",
-    dates: "2022 — 2026",
-    subjectsApproved: 9,
-    subjectsTotal: 14,
-    status: "En pausa",
-    description:
-      "Formación técnica en desarrollo web y aplicaciones móviles. 9 materias de 14 aprobadas.",
-  },
-];
+const PERSONAL_ICONS: Record<PersonalInfoIcon, ReactNode> = {
+  location: <MapPin className="w-4 h-4" strokeWidth={1.75} />,
+  education: <GraduationCap className="w-4 h-4" strokeWidth={1.75} />,
+  availability: <Clock className="w-4 h-4" strokeWidth={1.75} />,
+  languages: <Languages className="w-4 h-4" strokeWidth={1.75} />,
+};
 
 const statusStyles = {
   "En curso": "bg-accent-secondary text-bg-primary border-accent-secondary",
@@ -102,9 +75,31 @@ function PercentBar({ value, label }: { value: number; label: string }) {
   );
 }
 
+/** Renders a paragraph, bolding any phrase listed in `strong`. */
+function Paragraph({ text, strong = [] }: { text: string; strong?: string[] }) {
+  if (strong.length === 0) return <p>{text}</p>;
+  const pattern = new RegExp(`(${strong.map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "g");
+  const parts = text.split(pattern);
+  return (
+    <p>
+      {parts.map((part, i) =>
+        strong.includes(part) ? (
+          <span key={i} className="text-text-primary font-medium">
+            {part}
+          </span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </p>
+  );
+}
+
 /* ─── Main Component ──────────────────────────────────────────── */
 
 export default function About() {
+  const certsSection = getSection("certifications");
+
   return (
     <SectionWrapper id="about">
       <div className="container-main">
@@ -123,30 +118,9 @@ export default function About() {
             </m.div>
 
             <m.div className="space-y-5 text-text-secondary leading-relaxed" variants={fadeUp}>
-              <p>
-                Mi filosofía de desarrollo se basa en la convergencia entre la
-                ingeniería de software tradicional y la potencia de la
-                Inteligencia Artificial. No veo a la IA como un reemplazo, sino
-                como un{" "}
-                <span className="text-text-primary font-medium">
-                  multiplicador de capacidades
-                </span>{" "}
-                que me permite entregar soluciones robustas en tiempos
-                optimizados. Mi enfoque es construir sistemas escalables donde la
-                precisión del código y la innovación inteligente trabajen en
-                sintonía.
-              </p>
-              <p>
-                Desarrollador Fullstack enfocado en la construcción de
-                ecosistemas digitales de alto rendimiento. Mi especialidad abarca
-                desde el desarrollo{" "}
-                <span className="text-text-primary font-medium">Frontend moderno</span>{" "}
-                hasta la lógica de negocio en el{" "}
-                <span className="text-text-primary font-medium">Backend</span>,
-                garantizando la integración perfecta de APIs y bases de datos.
-                Aplico metodologías asistidas por IA para maximizar la calidad
-                del código y la velocidad de entrega.
-              </p>
+              {PHILOSOPHY_PARAGRAPHS.map((p, i) => (
+                <Paragraph key={i} text={p.text} strong={p.strong} />
+              ))}
             </m.div>
 
             <m.a
@@ -178,7 +152,7 @@ export default function About() {
                 </span>
               </m.div>
 
-              {personalInfo.map((item, i) => (
+              {PERSONAL_INFO.map((item, i) => (
                 <m.div
                   key={item.label}
                   className="flex items-start gap-3 py-3 border-b border-border-subtle last:border-b-0"
@@ -186,7 +160,7 @@ export default function About() {
                   custom={i}
                 >
                   <OctaIcon size="sm" accent={i % 2 === 0 ? "primary" : "secondary"}>
-                    {item.icon}
+                    {PERSONAL_ICONS[item.icon]}
                   </OctaIcon>
                   <div>
                     <p className="text-xs text-text-muted uppercase tracking-wider font-mono font-medium">
@@ -214,21 +188,15 @@ export default function About() {
           </m.h3>
 
           <div className="space-y-6">
-            {education.map((edu, i) => (
+            {EDUCATION.map((edu, i) => (
               <m.div key={edu.career} variants={fadeUp} custom={i}>
-                <ChamferBox
-                  elevated
-                  accent={i === 0 ? "secondary" : "primary"}
-                  className="p-6 lg:p-8"
-                >
+                <ChamferBox elevated accent={i === 0 ? "secondary" : "primary"} className="p-6 lg:p-8">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                     <div>
                       <h4 className="font-display text-lg font-semibold uppercase text-text-primary">
                         {edu.career}
                       </h4>
-                      <p className="text-sm text-text-secondary font-medium mt-1">
-                        {edu.institution}
-                      </p>
+                      <p className="text-sm text-text-secondary font-medium mt-1">{edu.institution}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="pill font-mono">{edu.dates}</span>
@@ -240,16 +208,10 @@ export default function About() {
                     </div>
                   </div>
 
-                  <p className="text-text-secondary text-sm leading-relaxed mb-5">
-                    {edu.description}
-                  </p>
+                  <p className="text-text-secondary text-sm leading-relaxed mb-5">{edu.description}</p>
 
                   {edu.subjectsApproved !== undefined ? (
-                    <BlockBar
-                      value={edu.subjectsApproved}
-                      total={edu.subjectsTotal!}
-                      label="Materias aprobadas"
-                    />
+                    <BlockBar value={edu.subjectsApproved} total={edu.subjectsTotal!} label="Materias aprobadas" />
                   ) : (
                     <PercentBar value={edu.progress!} label="Progreso de la carrera" />
                   )}
@@ -260,32 +222,28 @@ export default function About() {
         </m.div>
 
         {/* ── Certifications link ───────────────────────────────── */}
-        <m.div
-          className="mt-12 text-center"
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <p className="text-text-secondary text-sm leading-relaxed">
-            Además cuento con certificaciones en{" "}
-            <span className="text-text-primary font-medium">
-              Desarrollo Web, Python y Full Stack Junior.
-            </span>
-          </p>
-          <m.a
-            href="#certifications"
-            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.preventDefault();
-              document.getElementById("certifications")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="inline-flex items-center gap-1.5 mt-3 text-sm font-mono font-medium text-text-secondary hover:text-[var(--color-accent-primary)] transition-colors cursor-pointer group"
-            whileHover={{ x: 4 }}
+        {certsSection && (
+          <m.div
+            className="mt-12 text-center"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Ver certificaciones
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
-          </m.a>
-        </m.div>
+            <p className="text-text-secondary text-sm leading-relaxed">
+              Además cuento con certificaciones en{" "}
+              <span className="text-text-primary font-medium">{CERT_SUMMARY}</span>
+            </p>
+            <m.a
+              href={certsSection.path}
+              className="inline-flex items-center gap-1.5 mt-3 text-sm font-mono font-medium text-text-secondary hover:text-[var(--color-accent-primary)] transition-colors cursor-pointer group"
+              whileHover={{ x: 4 }}
+            >
+              Ver certificaciones
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+            </m.a>
+          </m.div>
+        )}
       </div>
     </SectionWrapper>
   );

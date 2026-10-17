@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Mail, Phone, ArrowUp } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import PixelStrip from "@/components/ui/PixelStrip";
+import { SECTIONS } from "@/content/sections";
 
 // Brand icons (not available in lucide-react)
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -19,14 +20,10 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// ─── Nav links (same as NavBar) ──────────────────────────────────────────────
+// ─── Nav links — real routes, sourced from the section registry ─────────────
 const navLinks = [
-  { label: "Inicio", href: "#hero" },
-  { label: "Sobre mí", href: "#about" },
-  { label: "Habilidades", href: "#skills" },
-  { label: "Experiencia", href: "#experience" },
-  { label: "Proyectos", href: "#projects" },
-  { label: "Contacto", href: "#contact" },
+  { label: "Hub", href: "/" },
+  ...SECTIONS.map((s) => ({ label: s.label, href: s.path })),
 ];
 
 const socialLinks = [
@@ -66,7 +63,7 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Link href="#hero" className="inline-block">
+            <Link href="/" className="inline-block">
               <span className="font-display font-semibold text-lg tracking-wider uppercase">
                 <span className="accent-text">Felipe</span>{" "}
                 <span className="text-text-primary">Prono</span>

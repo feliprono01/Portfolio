@@ -7,56 +7,7 @@ import ChamferBox from "@/components/ui/ChamferBox";
 import Chip from "@/components/ui/Chip";
 import { m } from "framer-motion";
 import { Calendar, MapPinned, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
-
-/* ─── Data ───────────────────────────────────────────────────── */
-
-const role = {
-  title: "Desarrollador Full Stack",
-  context: "Proyectos Independientes",
-  modality: "Independiente · Remoto",
-  period: "2024 — Presente",
-  description:
-    "Desarrollo end-to-end de sistemas web y mobile para clientes de distintos rubros. Gestión autónoma del ciclo completo: relevamiento de requerimientos, diseño de arquitectura, desarrollo, seguridad y puesta en producción.",
-};
-
-interface Quest {
-  title: string;
-  client: string;
-  status: "Completada" | "En progreso";
-  text: string;
-  tags: string[];
-}
-
-const quests: Quest[] = [
-  {
-    title: "Historias Clínicas — Psiquiatría",
-    client: "Sector salud",
-    status: "Completada",
-    text: "Sistema de gestión de historias clínicas para el área psiquiátrica, con arquitectura MVC y Spring Security para garantizar confidencialidad de datos sensibles de pacientes.",
-    tags: ["React", "Tailwind CSS", "Spring Boot", "Spring Security", "MySQL"],
-  },
-  {
-    title: "Almuerzos Corporativos",
-    client: "Gestión interna de empresas",
-    status: "Completada",
-    text: "Solución multiplataforma de gestión de almuerzos: app mobile con React Native + Expo y versión web, ambas consumiendo la misma API REST en Spring Boot.",
-    tags: ["React Native", "Expo", "HTML/CSS/JS", "Spring Boot", "MySQL"],
-  },
-  {
-    title: "RDAM — Certificados Digitales",
-    client: "i2t",
-    status: "Completada",
-    text: "Plataforma de emisión de certificados digitales con autenticación por email, pasarela de pagos, roles (administrador/operador) y panel de gestión. Deploy containerizado.",
-    tags: ["React", "Tailwind CSS", "Spring Boot", "MySQL", "Docker"],
-  },
-  {
-    title: "Facturación Agropecuaria",
-    client: "PyME del sector agro",
-    status: "En progreso",
-    text: "Sistema de facturación con cálculo automático de impuestos y percepciones. Fase de análisis y diseño, trabajando con el cliente en la definición de requerimientos.",
-    tags: ["Análisis de requerimientos", "Arquitectura"],
-  },
-];
+import { ROLE, QUESTS } from "@/content/experience";
 
 /* ─── Animation Variants ─────────────────────────────────────── */
 
@@ -114,7 +65,7 @@ export default function Experience() {
           >
             <span className="pill font-mono gap-2">
               <Calendar className="w-3.5 h-3.5" strokeWidth={1.75} />
-              {role.period}
+              {ROLE.period}
             </span>
           </m.div>
 
@@ -123,19 +74,19 @@ export default function Experience() {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
                 <div>
                   <h3 className="font-display font-semibold uppercase text-xl md:text-2xl text-text-primary">
-                    {role.title}
+                    {ROLE.title}
                   </h3>
-                  <p className="text-text-muted text-sm mt-1">{role.context}</p>
+                  <p className="text-text-muted text-sm mt-1">{ROLE.context}</p>
                 </div>
 
                 <span className="pill font-mono gap-2 shrink-0">
                   <MapPinned className="w-3.5 h-3.5" strokeWidth={1.75} />
-                  {role.modality}
+                  {ROLE.modality}
                 </span>
               </div>
 
               <p className="text-text-secondary text-sm md:text-[0.9375rem] leading-relaxed">
-                {role.description}
+                {ROLE.description}
               </p>
             </ChamferBox>
           </m.div>
@@ -172,7 +123,7 @@ export default function Experience() {
             className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-6 px-6 -mx-6 pb-4"
             style={{ scrollbarWidth: "thin" }}
           >
-            {quests.map((quest, i) => (
+            {QUESTS.map((quest, i) => (
               <m.li
                 key={quest.title}
                 className="shrink-0 w-[85vw] sm:w-[320px] snap-start"

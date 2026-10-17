@@ -9,72 +9,7 @@ import OctaPattern from "@/components/ui/OctaPattern";
 import Dialog from "@/components/ui/Dialog";
 import { m, AnimatePresence } from "framer-motion";
 import { Star, Lock, ExternalLink } from "lucide-react";
-
-/* ─── Types ───────────────────────────────────────────────────── */
-
-type Category = "Todas" | "Frontend" | "Backend" | "FullStack";
-
-interface Project {
-  title: string;
-  category: Category;
-  description: string;
-  badges: string[];
-  tags: string[];
-  repo: string | null;
-  demo: string | null;
-  featured: boolean;
-}
-
-/* ─── Data ────────────────────────────────────────────────────── */
-
-const categories: Category[] = ["Todas", "Frontend", "Backend", "FullStack"];
-
-const projects: Project[] = [
-  {
-    title: "Sistema de Almuerzo para Empresas",
-    category: "FullStack",
-    description:
-      "Sistema integral para la gestión de almuerzos corporativos. Plataforma web y aplicación mobile consumiendo la misma API REST, permitiendo a empleados realizar pedidos y a administradores gestionar menús y reportes.",
-    badges: ["CLIENT/UI", "REST API", "MOBILE"],
-    tags: ["HTML", "CSS", "JavaScript", "Spring Boot", "React Native", "Expo Go"],
-    repo: null,
-    demo: null,
-    featured: true,
-  },
-  {
-    title: "Historias Clínicas — Psiquiatría",
-    category: "FullStack",
-    description:
-      "Sistema para almacenar y gestionar pacientes del área psiquiátrica junto con su evolución clínica. Implementación de seguridad robusta para protección de datos sensibles de salud mental.",
-    badges: ["CLIENT/UI", "REST API", "AUTH"],
-    tags: ["React", "Tailwind CSS", "Spring Boot", "Spring Security", "MySQL"],
-    repo: null,
-    demo: null,
-    featured: true,
-  },
-  {
-    title: "RDAM",
-    category: "FullStack",
-    description:
-      "Sistema RDAM para el Poder Judicial de la provincia de Santa Fe. Permite la solicitud de certificados por parte de los ciudadanos y la carga de los mismos por parte de los operadores. Arquitectura fullstack con autenticación, roles y deploy containerizado.",
-    badges: ["CLIENT/UI", "REST API", "AUTH"],
-    tags: ["React", "Tailwind CSS", "Spring Boot", "Spring Security", "MySQL", "Docker"],
-    repo: null,
-    demo: null,
-    featured: true,
-  },
-  {
-    title: "Portfolio Personal",
-    category: "Frontend",
-    description:
-      "Portfolio profesional para mostrar capacidades, experiencia y proyectos. Diseño moderno con animaciones, modo oscuro y rendimiento optimizado.",
-    badges: ["CLIENT/UI", "SSG"],
-    tags: ["Next.js", "React", "Tailwind CSS", "Framer Motion", "TypeScript"],
-    repo: null,
-    demo: null,
-    featured: true,
-  },
-];
+import { PROJECT_CATEGORIES, PROJECTS, BADGE_ACCENT, type Project, type ProjectCategory } from "@/content/projects";
 
 /* ─── Animation Variants ──────────────────────────────────────── */
 
@@ -89,16 +24,6 @@ const cardVariants = {
   hidden: { opacity: 0, y: 32, scale: 0.97 },
   visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease } },
   exit: { opacity: 0, y: -16, scale: 0.97, transition: { duration: 0.3, ease } },
-};
-
-/* ─── Badge accent map — alternates the two palette accents ───── */
-
-const badgeAccent: Record<string, "primary" | "secondary"> = {
-  "CLIENT/UI": "secondary",
-  "REST API": "secondary",
-  MOBILE: "primary",
-  AUTH: "primary",
-  SSG: "secondary",
 };
 
 /* ─── Cartridge — a project tile with a CSS 3D tilt that tracks
@@ -145,7 +70,7 @@ function Cartridge({ project, onOpen }: { project: Project; onOpen: () => void }
         {/* Label area */}
         <div className="relative h-32 border-b border-border-subtle bg-bg-primary/40 flex items-center justify-center overflow-hidden">
           <OctaPattern className="absolute -top-4 -right-4 opacity-40" />
-          <span className="font-display font-semibold uppercase text-text-muted/70 text-base tracking-wide text-center px-4">
+          <span className="font-display font-semibold uppercase text-text-secondary text-base tracking-wide text-center px-4">
             {project.title}
           </span>
           {project.featured && (
@@ -178,12 +103,12 @@ function Cartridge({ project, onOpen }: { project: Project; onOpen: () => void }
 /* ─── Component ──────────────────────────────────────────────── */
 
 export default function Projects() {
-  const [active, setActive] = useState<Category>("Todas");
+  const [active, setActive] = useState<ProjectCategory>("Todas");
   const [openProject, setOpenProject] = useState<Project | null>(null);
   const titleId = useId();
 
   const filtered =
-    active === "Todas" ? projects : projects.filter((p) => p.category === active);
+    active === "Todas" ? PROJECTS : PROJECTS.filter((p) => p.category === active);
 
   return (
     <SectionWrapper id="projects" className="bg-bg-secondary/40">
@@ -205,7 +130,7 @@ export default function Projects() {
 
         {/* ── Category Filters ────────────────────────────── */}
         <div className="flex justify-center flex-wrap gap-2 mb-12">
-          {categories.map((cat) => (
+          {PROJECT_CATEGORIES.map((cat) => (
             <Chip
               key={cat}
               as="button"
@@ -261,7 +186,7 @@ export default function Projects() {
                 <span
                   key={badge}
                   className={`inline-flex items-center px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider border chamfer-sm ${
-                    badgeAccent[badge] === "primary"
+                    BADGE_ACCENT[badge] === "primary"
                       ? "text-accent-primary border-accent-primary/50"
                       : "text-accent-secondary border-accent-secondary/50"
                   }`}

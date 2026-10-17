@@ -7,29 +7,30 @@ import { useAppStore } from "@/lib/store";
 import { useKonami } from "@/hooks/useKonami";
 import { playUnlock, playPowerUp } from "@/lib/sfx";
 
-interface Achievement {
+interface ToastItem {
   id: string;
   label: string;
 }
 
-const SECTION_ACHIEVEMENTS: Achievement[] = [
-  { id: "about", label: "Conociste la historia" },
-  { id: "skills", label: "Revisaste el inventario" },
-  { id: "experience", label: "Abriste el registro de misiones" },
-  { id: "certifications", label: "Encontraste los logros oficiales" },
-  { id: "projects", label: "Entraste a la sala de cartuchos" },
-  { id: "contact", label: "Llegaste al final del mapa" },
-];
-
-const KONAMI_ACHIEVEMENT: Achievement = { id: "konami", label: "Código secreto desbloqueado" };
+const LABELS: Record<string, string> = {
+  about: "Conociste la historia",
+  skills: "Revisaste el inventario",
+  experience: "Abriste el registro de misiones",
+  certifications: "Encontraste los logros oficiales",
+  projects: "Entraste a la sala de cartuchos",
+  contact: "Llegaste al final del mapa",
+  konami: "Código secreto desbloqueado",
+};
 
 const TOAST_MS = 3600;
 
 /**
- * Mounted once in the layout. Watches each main section with an
- * IntersectionObserver and unlocks a one-time achievement the first time a
- * visitor scrolls into it; also wires the Konami code to its own
- * achievement + a glitch burst. Toasts queue instead of overlapping, are
+ * Mounted once in the layout. Doesn't decide *when* achievements unlock —
+ * that's each caller's job (Hud.tsx calls unlock() when a level page mounts,
+ * useKonami below calls it for the secret code, and later the terminal can
+ * do the same). This component just diffs the persisted achievements list
+ * against what it's already shown a toast for, so any unlock() anywhere
+ * surfaces one automatically. Toasts queue instead of overlapping, are
  * role="status" (announced, non-blocking), and never steal focus.
  */
 export default function AchievementToast() {
@@ -39,46 +40,39 @@ export default function AchievementToast() {
   const soundRef = useRef(soundEnabled);
   soundRef.current = soundEnabled;
 
-  const [queue, setQueue] = useState<Achievement[]>([]);
+  const [queue, setQueue] = useState<ToastItem[]>([]);
   const current = queue[0] ?? null;
+  const seenRef = useRef<Set<string>>(new Set());
 
-  const enqueue = useCallback((achievement: Achievement, sound: () => void) => {
-    setQueue((q) => [...q, achievement]);
+  const enqueue = useCallback((id: string, sound: () => void) => {
+    const label = LABELS[id];
+    if (!label) return;
+    setQueue((q) => [...q, { id, label }]);
     if (soundRef.current) sound();
   }, []);
 
-  // ── Section watchers ─────────────────────────────────────────
+  // ── Diff the achievements list on every change ────────────────────────
   useEffect(() => {
     if (!hydrated) return;
+    seenRef.current = new Set(useAppStore.getState().achievements);
 
-    const observers: IntersectionObserver[] = [];
-    for (const achievement of SECTION_ACHIEVEMENTS) {
-      const el = document.getElementById(achievement.id);
-      if (!el) continue;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && unlock(achievement.id)) {
-            enqueue(achievement, playUnlock);
-          }
-        },
-        { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
-      );
-      observer.observe(el);
-      observers.push(observer);
-    }
-
-    return () => observers.forEach((o) => o.disconnect());
-  }, [hydrated, unlock, enqueue]);
+    return useAppStore.subscribe((state, prev) => {
+      if (state.achievements === prev.achievements) return;
+      for (const id of state.achievements) {
+        if (!seenRef.current.has(id)) {
+          seenRef.current.add(id);
+          enqueue(id, id === "konami" ? playPowerUp : playUnlock);
+        }
+      }
+    });
+  }, [hydrated, enqueue]);
 
   // ── Konami code ───────────────────────────────────────────────
   useKonami(() => {
     if (!hydrated) return;
     document.documentElement.classList.add("glitch-burst");
     setTimeout(() => document.documentElement.classList.remove("glitch-burst"), 1600);
-    if (unlock(KONAMI_ACHIEVEMENT.id)) {
-      enqueue(KONAMI_ACHIEVEMENT, playPowerUp);
-    }
+    unlock("konami");
   });
 
   // ── Advance the queue ────────────────────────────────────────

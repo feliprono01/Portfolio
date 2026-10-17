@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
 import ChamferBox from "@/components/ui/ChamferBox";
@@ -8,68 +8,14 @@ import OctaIcon from "@/components/ui/OctaIcon";
 import { m, useInView } from "framer-motion";
 import { useSkillParticles } from "@/hooks/useSkillParticles";
 import { Monitor, Server, Database, GitBranch } from "lucide-react";
+import { SKILL_CATEGORIES, LEVEL_LABEL, type SkillLevel, type SkillCategoryIcon } from "@/content/skills";
 
-/* ─── Levels ─────────────────────────────────────────────────────
-   Qualitative, not self-rated: derived from how often each
-   technology actually shows up across the Experience/Projects
-   sections, not a made-up percentage.
-   ──────────────────────────────────────────────────────────────── */
-
-type Level = 1 | 2 | 3;
-
-const LEVEL_LABEL: Record<Level, string> = {
-  1: "Novato",
-  2: "Intermedio",
-  3: "Avanzado",
+const CATEGORY_ICONS: Record<SkillCategoryIcon, ReactNode> = {
+  frontend: <Monitor className="w-5 h-5" strokeWidth={1.75} />,
+  backend: <Server className="w-5 h-5" strokeWidth={1.75} />,
+  database: <Database className="w-5 h-5" strokeWidth={1.75} />,
+  tools: <GitBranch className="w-5 h-5" strokeWidth={1.75} />,
 };
-
-interface Skill {
-  name: string;
-  level: Level;
-}
-
-const skillCategories: { title: string; icon: React.ReactNode; skills: Skill[] }[] = [
-  {
-    title: "Frontend & Mobile",
-    icon: <Monitor className="w-5 h-5" strokeWidth={1.75} />,
-    skills: [
-      { name: "React", level: 3 },
-      { name: "JavaScript (ES6+)", level: 3 },
-      { name: "HTML5 / CSS3", level: 3 },
-      { name: "React Native (Expo)", level: 2 },
-      { name: "WebGL (Basic)", level: 1 },
-    ],
-  },
-  {
-    title: "Backend & APIs",
-    icon: <Server className="w-5 h-5" strokeWidth={1.75} />,
-    skills: [
-      { name: "Java (POO)", level: 3 },
-      { name: "Spring Boot", level: 3 },
-      { name: "RESTful APIs", level: 3 },
-      { name: "Spring Security", level: 2 },
-      { name: "Python (Basics)", level: 1 },
-    ],
-  },
-  {
-    title: "Database & DevOps",
-    icon: <Database className="w-5 h-5" strokeWidth={1.75} />,
-    skills: [
-      { name: "MySQL / SQL", level: 3 },
-      { name: "Modelado de Datos", level: 2 },
-      { name: "Docker", level: 2 },
-    ],
-  },
-  {
-    title: "Tools & Workflow",
-    icon: <GitBranch className="w-5 h-5" strokeWidth={1.75} />,
-    skills: [
-      { name: "Git / GitHub", level: 3 },
-      { name: "Metodologías Ágiles", level: 2 },
-      { name: "AI-Assisted Development", level: 2 },
-    ],
-  },
-];
 
 /* ─── Animation Variants ─────────────────────────────────────── */
 
@@ -97,7 +43,7 @@ function LevelPips({
   delay,
   static: isStatic = false,
 }: {
-  level: Level;
+  level: SkillLevel;
   inView: boolean;
   delay: number;
   static?: boolean;
@@ -171,7 +117,7 @@ export default function Skills() {
 
         {/* ── Category Grid ──────────────────────────────── */}
         <div className="grid sm:grid-cols-2 gap-6 relative mt-12" style={{ zIndex: 2 }}>
-          {skillCategories.map((cat, ci) => (
+          {SKILL_CATEGORIES.map((cat, ci) => (
             <m.div
               key={cat.title}
               custom={ci}
@@ -182,7 +128,7 @@ export default function Skills() {
             >
               <ChamferBox elevated accent={ci % 2 === 0 ? "primary" : "secondary"} className="p-6 lg:p-8 h-full">
                 <div className="flex items-center gap-3 mb-6">
-                  <OctaIcon accent={ci % 2 === 0 ? "primary" : "secondary"}>{cat.icon}</OctaIcon>
+                  <OctaIcon accent={ci % 2 === 0 ? "primary" : "secondary"}>{CATEGORY_ICONS[cat.icon]}</OctaIcon>
                   <div>
                     <h3 className="font-display font-semibold uppercase text-lg text-text-primary">
                       {cat.title}

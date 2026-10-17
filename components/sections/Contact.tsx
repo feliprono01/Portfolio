@@ -9,7 +9,7 @@ import { m, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import {
   Mail,
   Phone,
@@ -19,11 +19,7 @@ import {
   AlertCircle,
   MessageSquare,
 } from "lucide-react";
-
-const DIALOGUE: Record<"sent" | "error", string> = {
-  sent: "¡Mensaje recibido! Te voy a responder a la brevedad, normalmente en menos de 24 horas.",
-  error: "Algo salió mal al enviar el mensaje. Probá de nuevo o escribime directo a felipeprono@gmail.com.",
-};
+import { CONTACT_LINKS, CONTACT_DIALOGUE, type ContactIcon } from "@/content/contact";
 
 // Brand icons (not available in lucide-react)
 const LinkedinIcon = ({ className }: { className?: string }) => (
@@ -38,6 +34,13 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const CONTACT_ICONS: Record<ContactIcon, ComponentType<{ className?: string }>> = {
+  email: Mail,
+  phone: Phone,
+  linkedin: LinkedinIcon,
+  github: GithubIcon,
+};
+
 // ─── Schema ──────────────────────────────────────────────────────────────────
 const contactSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres"),
@@ -47,14 +50,6 @@ const contactSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
-
-// ─── Contact info ────────────────────────────────────────────────────────────
-const contactLinks = [
-  { label: "Email", value: "felipeprono@gmail.com", href: "mailto:felipeprono@gmail.com", icon: Mail },
-  { label: "Teléfono", value: "+54 9 342 478-7555", href: "tel:+5493424787555", icon: Phone },
-  { label: "LinkedIn", value: "Felipe Prono", href: "https://www.linkedin.com/in/felipe-prono-5b0886173/", icon: LinkedinIcon },
-  { label: "GitHub", value: "feliprono01", href: "https://github.com/feliprono01", icon: GithubIcon },
-];
 
 // ─── Animations ──────────────────────────────────────────────────────────────
 const containerVariants = {
@@ -146,8 +141,8 @@ export default function Contact() {
             </m.div>
 
             <m.div className="space-y-3" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              {contactLinks.map((link, i) => {
-                const Icon = link.icon;
+              {CONTACT_LINKS.map((link, i) => {
+                const Icon = CONTACT_ICONS[link.icon];
                 return (
                   <m.a
                     key={link.label}
@@ -346,7 +341,7 @@ export default function Contact() {
                         <p className="text-[10px] font-mono uppercase tracking-wider text-text-muted mb-1">
                           Sistema
                         </p>
-                        <Typewriter text={DIALOGUE[status]} className="text-sm text-text-secondary leading-relaxed" />
+                        <Typewriter text={CONTACT_DIALOGUE[status]} className="text-sm text-text-secondary leading-relaxed" />
                       </div>
                     </ChamferBox>
                   </m.div>

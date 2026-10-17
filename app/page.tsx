@@ -1,25 +1,17 @@
-import NavBar from "@/components/ui/NavBar";
-import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Skills from "@/components/sections/Skills";
-import Experience from "@/components/sections/Experience";
-import Certifications from "@/components/sections/Certifications";
-import Projects from "@/components/sections/Projects";
-import Contact from "@/components/sections/Contact";
+import SkinSelector from "@/components/ui/SkinSelector";
+import TitleScreen from "@/components/hub/TitleScreen";
+import LevelSelect from "@/components/hub/LevelSelect";
 import Footer from "@/components/sections/Footer";
 
-export default function HomePage() {
+export default function HubPage() {
   return (
     <>
-      <NavBar />
+      <header className="fixed top-0 inset-x-0 z-[100] flex justify-end p-4">
+        <SkinSelector />
+      </header>
       <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Experience />
-        <Certifications />
-        <Projects />
-        <Contact />
+        <TitleScreen />
+        <LevelSelect />
       </main>
       <Footer />
     </>
