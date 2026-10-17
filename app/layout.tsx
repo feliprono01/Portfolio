@@ -16,6 +16,7 @@ import BootScreen from "@/components/fx/BootScreen";
 import AchievementToast from "@/components/fx/AchievementToast";
 import ClickSfx from "@/components/fx/ClickSfx";
 import ScreenTransition from "@/components/fx/ScreenTransition";
+import TerminalLauncher from "@/components/terminal/TerminalLauncher";
 import { DEFAULT_SKIN, SKIN_IDS } from "@/lib/skins";
 import { STORE_KEY } from "@/lib/store";
 
@@ -137,6 +138,7 @@ export default function RootLayout({
         <AchievementToast />
         <ClickSfx />
         <ScreenTransition />
+        <TerminalLauncher />
       </body>
     </html>
   );

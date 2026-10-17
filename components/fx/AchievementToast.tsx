@@ -20,6 +20,7 @@ const LABELS: Record<string, string> = {
   projects: "Entraste a la sala de cartuchos",
   contact: "Llegaste al final del mapa",
   konami: "Código secreto desbloqueado",
+  terminal: "Descubriste la terminal",
 };
 
 const TOAST_MS = 3600;
