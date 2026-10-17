@@ -1,12 +1,13 @@
 "use client";
 
+import { useId, useRef, useState, type MouseEvent } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
 import ChamferBox from "@/components/ui/ChamferBox";
 import Chip from "@/components/ui/Chip";
 import OctaPattern from "@/components/ui/OctaPattern";
+import Dialog from "@/components/ui/Dialog";
 import { m, AnimatePresence } from "framer-motion";
-import { useState } from "react";
 import { Star, Lock, ExternalLink } from "lucide-react";
 
 /* ─── Types ───────────────────────────────────────────────────── */
@@ -100,10 +101,86 @@ const badgeAccent: Record<string, "primary" | "secondary"> = {
   SSG: "secondary",
 };
 
+/* ─── Cartridge — a project tile with a CSS 3D tilt that tracks
+   the pointer, like picking it off a shelf. Reduced motion gets a
+   flat hover instead. ──────────────────────────────────────────── */
+
+function Cartridge({ project, onOpen }: { project: Project; onOpen: () => void }) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  const handleMove = (e: MouseEvent<HTMLButtonElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    el.style.setProperty("--ry", `${px * 14}deg`);
+    el.style.setProperty("--rx", `${py * -14}deg`);
+  };
+
+  const resetTilt = () => {
+    ref.current?.style.setProperty("--ry", "0deg");
+    ref.current?.style.setProperty("--rx", "0deg");
+  };
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={onOpen}
+      onMouseMove={handleMove}
+      onMouseLeave={resetTilt}
+      aria-haspopup="dialog"
+      className="group text-left w-full"
+      style={{
+        transform: "perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))",
+        transition: "transform 150ms ease-out",
+      }}
+    >
+      <ChamferBox
+        elevated
+        accent="border"
+        className="flex flex-col h-full transition-colors duration-200 group-hover:border-accent-primary group-focus-visible:border-accent-primary"
+      >
+        {/* Label area */}
+        <div className="relative h-32 border-b border-border-subtle bg-bg-primary/40 flex items-center justify-center overflow-hidden">
+          <OctaPattern className="absolute -top-4 -right-4 opacity-40" />
+          <span className="font-display font-semibold uppercase text-text-muted/70 text-base tracking-wide text-center px-4">
+            {project.title}
+          </span>
+          {project.featured && (
+            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-semibold bg-accent-primary text-bg-primary chamfer-sm">
+              <Star className="w-2.5 h-2.5" fill="currentColor" strokeWidth={0} />
+              Top
+            </span>
+          )}
+        </div>
+
+        {/* Connector ridges — the cartridge detail */}
+        <div className="flex gap-1 px-4 pt-3" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, i) => (
+            <span key={i} className="h-1 flex-1 bg-border-default" />
+          ))}
+        </div>
+
+        <div className="p-4 flex flex-col flex-1">
+          <span className="pill self-start text-[10px] font-mono mb-2">{project.category}</span>
+          <h3 className="font-display font-semibold uppercase text-base text-text-primary mb-1">
+            {project.title}
+          </h3>
+          <p className="text-text-muted text-xs font-mono mt-auto pt-3">Ver detalle →</p>
+        </div>
+      </ChamferBox>
+    </button>
+  );
+}
+
 /* ─── Component ──────────────────────────────────────────────── */
 
 export default function Projects() {
   const [active, setActive] = useState<Category>("Todas");
+  const [openProject, setOpenProject] = useState<Project | null>(null);
+  const titleId = useId();
 
   const filtered =
     active === "Todas" ? projects : projects.filter((p) => p.category === active);
@@ -122,7 +199,7 @@ export default function Projects() {
             <SectionTitle>Proyectos</SectionTitle>
           </m.div>
           <m.p className="text-text-secondary mt-4 max-w-xl mx-auto" variants={headingVariants}>
-            Soluciones reales donde apliqué cada parte del stack, de punta a punta.
+            Un estante de cartuchos — elegí uno para ver el detalle completo.
           </m.p>
         </m.div>
 
@@ -141,11 +218,11 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* ── Project Cards Grid ──────────────────────────── */}
-        <m.div className="grid md:grid-cols-2 gap-6" layout>
+        {/* ── Cartridge shelf ──────────────────────────────── */}
+        <m.div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" layout>
           <AnimatePresence mode="popLayout">
             {filtered.map((project) => (
-              <m.article
+              <m.div
                 key={project.title}
                 variants={cardVariants}
                 initial="hidden"
@@ -154,87 +231,8 @@ export default function Projects() {
                 layout
                 transition={{ duration: 0.3 }}
               >
-                <ChamferBox
-                  elevated
-                  accent="border"
-                  className="flex flex-col h-full group transition-all duration-300 hover:-translate-y-1 hover:border-accent-secondary/60"
-                >
-                  {/* Placeholder visual — swap for a screenshot once available */}
-                  <div className="relative h-36 border-b border-border-subtle bg-bg-primary/40 flex items-center justify-center overflow-hidden">
-                    <OctaPattern className="absolute -top-4 -right-4 opacity-40" />
-                    <span className="font-display font-semibold uppercase text-text-muted/70 text-lg tracking-wide text-center px-4">
-                      {project.title}
-                    </span>
-                    {project.featured && (
-                      <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono font-semibold bg-accent-primary text-bg-primary chamfer-sm">
-                        <Star className="w-3 h-3" fill="currentColor" strokeWidth={0} />
-                        Destacado
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="p-6 lg:p-8 flex flex-col flex-1">
-                    {/* Badges */}
-                    <div className="flex flex-wrap gap-1.5 mb-5">
-                      {project.badges.map((badge) => (
-                        <span
-                          key={badge}
-                          className={`inline-flex items-center px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider border chamfer-sm ${
-                            badgeAccent[badge] === "primary"
-                              ? "text-accent-primary border-accent-primary/50"
-                              : "text-accent-secondary border-accent-secondary/50"
-                          }`}
-                        >
-                          {badge}
-                        </span>
-                      ))}
-                    </div>
-
-                    <span className="pill self-start text-[10px] font-mono mb-3">{project.category}</span>
-
-                    <h3 className="font-display font-semibold uppercase text-xl mb-2 text-text-primary">
-                      {project.title}
-                    </h3>
-
-                    <p className="text-text-secondary text-sm leading-relaxed flex-1 mb-5">
-                      {project.description}
-                    </p>
-
-                    <div className="h-px bg-border-subtle mb-5" />
-
-                    <div className="mb-5">
-                      <p className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">
-                        Stack tecnológico
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.tags.map((tag) => (
-                          <Chip key={tag}>{tag}</Chip>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3 mt-auto">
-                      {project.demo && (
-                        <a href={project.demo} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2 px-4">
-                          Demo
-                          <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.75} />
-                        </a>
-                      )}
-                      {project.repo && (
-                        <a href={project.repo} target="_blank" rel="noopener noreferrer" className="btn-ghost text-sm py-2 px-4">
-                          GitHub
-                        </a>
-                      )}
-                      {!project.demo && !project.repo && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono text-text-muted border border-border-subtle chamfer-sm">
-                          <Lock className="w-4 h-4" strokeWidth={1.75} />
-                          Proyecto privado
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </ChamferBox>
-              </m.article>
+                <Cartridge project={project} onOpen={() => setOpenProject(project)} />
+              </m.div>
             ))}
           </AnimatePresence>
         </m.div>
@@ -248,6 +246,68 @@ export default function Projects() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ── Detail dialog ──────────────────────────────────── */}
+      <Dialog
+        open={openProject !== null}
+        onClose={() => setOpenProject(null)}
+        titleId={titleId}
+        title={openProject?.title ?? ""}
+      >
+        {openProject && (
+          <>
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {openProject.badges.map((badge) => (
+                <span
+                  key={badge}
+                  className={`inline-flex items-center px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider border chamfer-sm ${
+                    badgeAccent[badge] === "primary"
+                      ? "text-accent-primary border-accent-primary/50"
+                      : "text-accent-secondary border-accent-secondary/50"
+                  }`}
+                >
+                  {badge}
+                </span>
+              ))}
+            </div>
+
+            <span className="pill text-[10px] font-mono mb-4 inline-flex">{openProject.category}</span>
+
+            <p className="text-text-secondary text-sm leading-relaxed mb-5">{openProject.description}</p>
+
+            <div className="h-px bg-border-subtle mb-5" />
+
+            <p className="text-xs font-mono font-semibold text-text-muted uppercase tracking-wider mb-3">
+              Stack tecnológico
+            </p>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {openProject.tags.map((tag) => (
+                <Chip key={tag}>{tag}</Chip>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              {openProject.demo && (
+                <a href={openProject.demo} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2 px-4">
+                  Demo
+                  <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.75} />
+                </a>
+              )}
+              {openProject.repo && (
+                <a href={openProject.repo} target="_blank" rel="noopener noreferrer" className="btn-ghost text-sm py-2 px-4">
+                  GitHub
+                </a>
+              )}
+              {!openProject.demo && !openProject.repo && (
+                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono text-text-muted border border-border-subtle chamfer-sm">
+                  <Lock className="w-4 h-4" strokeWidth={1.75} />
+                  Proyecto privado
+                </span>
+              )}
+            </div>
+          </>
+        )}
+      </Dialog>
     </SectionWrapper>
   );
 }

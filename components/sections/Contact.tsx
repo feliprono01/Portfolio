@@ -4,7 +4,8 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
 import ChamferBox from "@/components/ui/ChamferBox";
 import OctaIcon from "@/components/ui/OctaIcon";
-import { m } from "framer-motion";
+import Typewriter from "@/components/ui/Typewriter";
+import { m, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,7 +17,13 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  MessageSquare,
 } from "lucide-react";
+
+const DIALOGUE: Record<"sent" | "error", string> = {
+  sent: "¡Mensaje recibido! Te voy a responder a la brevedad, normalmente en menos de 24 horas.",
+  error: "Algo salió mal al enviar el mensaje. Probá de nuevo o escribime directo a felipeprono@gmail.com.",
+};
 
 // Brand icons (not available in lucide-react)
 const LinkedinIcon = ({ className }: { className?: string }) => (
@@ -316,6 +323,35 @@ export default function Contact() {
                   </m.span>
                 )}
               </m.button>
+
+              {/* RPG-style dialogue box for the confirmation/error message */}
+              <AnimatePresence>
+                {(status === "sent" || status === "error") && (
+                  <m.div
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <ChamferBox
+                      elevated
+                      accent={status === "error" ? "border" : "secondary"}
+                      className="p-4 flex gap-3"
+                      role="status"
+                    >
+                      <OctaIcon size="sm" accent={status === "error" ? "primary" : "secondary"}>
+                        <MessageSquare className="w-4 h-4" />
+                      </OctaIcon>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-mono uppercase tracking-wider text-text-muted mb-1">
+                          Sistema
+                        </p>
+                        <Typewriter text={DIALOGUE[status]} className="text-sm text-text-secondary leading-relaxed" />
+                      </div>
+                    </ChamferBox>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </ChamferBox>
           </m.form>
         </div>

@@ -5,41 +5,79 @@ import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
 import ChamferBox from "@/components/ui/ChamferBox";
 import OctaIcon from "@/components/ui/OctaIcon";
-import Chip from "@/components/ui/Chip";
-import { m } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useSkillParticles } from "@/hooks/useSkillParticles";
 import { Monitor, Server, Database, GitBranch } from "lucide-react";
 
-/* ─── Data ───────────────────────────────────────────────────── */
+/* ─── Levels ─────────────────────────────────────────────────────
+   Qualitative, not self-rated: derived from how often each
+   technology actually shows up across the Experience/Projects
+   sections, not a made-up percentage.
+   ──────────────────────────────────────────────────────────────── */
 
-const skillCategories = [
+type Level = 1 | 2 | 3;
+
+const LEVEL_LABEL: Record<Level, string> = {
+  1: "Novato",
+  2: "Intermedio",
+  3: "Avanzado",
+};
+
+interface Skill {
+  name: string;
+  level: Level;
+}
+
+const skillCategories: { title: string; icon: React.ReactNode; skills: Skill[] }[] = [
   {
     title: "Frontend & Mobile",
     icon: <Monitor className="w-5 h-5" strokeWidth={1.75} />,
-    skills: ["React", "React Native (Expo Go)", "JavaScript (ES6+)", "HTML5", "CSS3", "WebGL (Basic)"],
+    skills: [
+      { name: "React", level: 3 },
+      { name: "JavaScript (ES6+)", level: 3 },
+      { name: "HTML5 / CSS3", level: 3 },
+      { name: "React Native (Expo)", level: 2 },
+      { name: "WebGL (Basic)", level: 1 },
+    ],
   },
   {
     title: "Backend & APIs",
     icon: <Server className="w-5 h-5" strokeWidth={1.75} />,
-    skills: ["Java (POO)", "Spring Boot", "Python (Basics)", "RESTful APIs"],
+    skills: [
+      { name: "Java (POO)", level: 3 },
+      { name: "Spring Boot", level: 3 },
+      { name: "RESTful APIs", level: 3 },
+      { name: "Spring Security", level: 2 },
+      { name: "Python (Basics)", level: 1 },
+    ],
   },
   {
     title: "Database & DevOps",
     icon: <Database className="w-5 h-5" strokeWidth={1.75} />,
-    skills: ["MySQL", "Docker", "Modelado de Datos", "SQL"],
+    skills: [
+      { name: "MySQL / SQL", level: 3 },
+      { name: "Modelado de Datos", level: 2 },
+      { name: "Docker", level: 2 },
+    ],
   },
   {
     title: "Tools & Workflow",
     icon: <GitBranch className="w-5 h-5" strokeWidth={1.75} />,
-    skills: ["Git/GitHub", "AI-Assisted Development (Copilot/Cursor)", "Metodologías Ágiles"],
+    skills: [
+      { name: "Git / GitHub", level: 3 },
+      { name: "Metodologías Ágiles", level: 2 },
+      { name: "AI-Assisted Development", level: 2 },
+    ],
   },
 ];
 
 /* ─── Animation Variants ─────────────────────────────────────── */
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 const headingVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
 };
 
 const cardVariants = {
@@ -47,24 +85,47 @@ const cardVariants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { delay: i * 0.12, duration: 0.6, ease },
   }),
 };
 
-const badgeVariants = {
-  hidden: { opacity: 0, scale: 0.85 },
-  visible: (i: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { delay: i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
-  }),
-};
+/* ─── Level pips — 3 blocks, filled up to the skill's level ───── */
+
+function LevelPips({
+  level,
+  inView,
+  delay,
+  static: isStatic = false,
+}: {
+  level: Level;
+  inView: boolean;
+  delay: number;
+  static?: boolean;
+}) {
+  return (
+    <span className="flex gap-1" aria-hidden="true">
+      {[1, 2, 3].map((n) => (
+        <m.span
+          key={n}
+          className={`h-2.5 w-4 border ${
+            n <= level ? "bg-accent-primary border-accent-primary" : "bg-transparent border-border-default"
+          }`}
+          initial={isStatic ? false : { scaleX: 0 }}
+          animate={isStatic || inView ? { scaleX: 1 } : { scaleX: 0 }}
+          style={{ originX: 0 }}
+          transition={{ duration: 0.3, delay: delay + n * 0.08, ease }}
+        />
+      ))}
+    </span>
+  );
+}
 
 /* ─── Component ──────────────────────────────────────────────── */
 
 export default function Skills() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { canvasRef, emitAt } = useSkillParticles(sectionRef);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
     <SectionWrapper id="skills" className="bg-bg-secondary/40">
@@ -79,7 +140,7 @@ export default function Skills() {
 
         {/* ── Header ──────────────────────────────────────── */}
         <m.div
-          className="text-center mb-16 relative"
+          className="text-center mb-4 relative"
           style={{ zIndex: 2 }}
           initial="hidden"
           whileInView="visible"
@@ -89,13 +150,27 @@ export default function Skills() {
             <SectionTitle>Mis tecnologías</SectionTitle>
           </m.div>
           <m.p className="text-text-secondary mt-4 max-w-xl mx-auto" variants={headingVariants}>
-            Las herramientas y tecnologías con las que trabajo a diario para
-            construir productos de calidad.
+            Ficha de personaje: el nivel de cada tecnología sale de cuánto la usé
+            en proyectos reales, no de una autoevaluación.
+          </m.p>
+          <m.p
+            className="font-mono text-xs text-text-muted mt-3 flex items-center justify-center gap-4"
+            variants={headingVariants}
+          >
+            <span className="flex items-center gap-1.5">
+              <LevelPips level={1} inView={false} delay={0} static /> Novato
+            </span>
+            <span className="flex items-center gap-1.5">
+              <LevelPips level={2} inView={false} delay={0} static /> Intermedio
+            </span>
+            <span className="flex items-center gap-1.5">
+              <LevelPips level={3} inView={false} delay={0} static /> Avanzado
+            </span>
           </m.p>
         </m.div>
 
         {/* ── Category Grid ──────────────────────────────── */}
-        <div className="grid sm:grid-cols-2 gap-6 relative" style={{ zIndex: 2 }}>
+        <div className="grid sm:grid-cols-2 gap-6 relative mt-12" style={{ zIndex: 2 }}>
           {skillCategories.map((cat, ci) => (
             <m.div
               key={cat.title}
@@ -118,29 +193,31 @@ export default function Skills() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2.5">
+                <ul className="space-y-3.5">
                   {cat.skills.map((skill, si) => (
-                    <m.div
-                      key={skill}
-                      custom={ci * 4 + si}
-                      variants={badgeVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
+                    <li
+                      key={skill.name}
+                      className="flex items-center justify-between gap-4"
                       onMouseEnter={(e) => {
                         const rect = e.currentTarget.getBoundingClientRect();
                         const sectionRect = sectionRef.current?.getBoundingClientRect();
                         if (!sectionRect) return;
                         emitAt(
-                          rect.left - sectionRect.left + rect.width / 2,
+                          rect.left - sectionRect.left + 16,
                           rect.top - sectionRect.top + rect.height / 2
                         );
                       }}
                     >
-                      <Chip>{skill}</Chip>
-                    </m.div>
+                      <span className="text-sm text-text-secondary">{skill.name}</span>
+                      <span className="flex items-center gap-2 shrink-0">
+                        <span className="hidden sm:inline text-[10px] font-mono uppercase text-text-muted">
+                          {LEVEL_LABEL[skill.level]}
+                        </span>
+                        <LevelPips level={skill.level} inView={isInView} delay={ci * 0.1 + si * 0.05} />
+                      </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </ChamferBox>
             </m.div>
           ))}
