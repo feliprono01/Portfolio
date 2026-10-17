@@ -14,7 +14,7 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#1a1814",
+          background: "#0a0f0a",
         }}
       >
         <div
@@ -24,8 +24,8 @@ export default function Icon() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#e0a245",
-            color: "#1a1814",
+            background: "#33ff66",
+            color: "#0a0f0a",
             fontSize: 14,
             fontWeight: 700,
             fontFamily: "monospace",

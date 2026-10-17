@@ -5,11 +5,11 @@ export const alt = "Felipe Prono — Desarrollador de Software";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const MUSTARD = "#e0a245";
-const SAGE = "#6e9077";
-const BG = "#1a1814";
-const TEXT = "#f2e8d5";
-const BORDER = "#4f473a";
+const ACCENT = "#33ff66";
+const ACCENT_2 = "#ffb000";
+const BG = "#0a0f0a";
+const TEXT = "#d6f5d6";
+const BORDER = "#1f3a1f";
 
 export default function Image() {
   return new ImageResponse(
@@ -59,7 +59,7 @@ export default function Image() {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            color: SAGE,
+            color: ACCENT_2,
             fontSize: 24,
             letterSpacing: 4,
             textTransform: "uppercase",
@@ -84,7 +84,7 @@ export default function Image() {
           }}
         >
           <span style={{ color: TEXT, display: "flex" }}>Software</span>
-          <span style={{ color: MUSTARD, display: "flex" }}>Developer</span>
+          <span style={{ color: ACCENT, display: "flex" }}>Developer</span>
         </div>
 
         {/* Stack chips */}
@@ -97,7 +97,7 @@ export default function Image() {
                 padding: "10px 20px",
                 fontSize: 20,
                 color: TEXT,
-                background: "#2b2720",
+                background: "#162216",
                 border: `1px solid ${BORDER}`,
               }}
             >

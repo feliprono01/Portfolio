@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { m, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import ThemeToggle from "@/components/ui/ThemeToggle";
+import SkinSelector from "@/components/ui/SkinSelector";
 
 // ─── Nav config ────────────────────────────────────────────────────────────────
 const navLinks = [
@@ -135,7 +135,7 @@ export default function NavBar() {
 
         {/* ── Theme toggle + CTA (desktop) ─────────────────────────────── */}
         <div className="hidden lg:flex items-center gap-4">
-          <ThemeToggle />
+          <SkinSelector />
           <a href="#contact" className="btn-primary !px-4 !py-2 text-xs">
             Contactar
           </a>
@@ -143,7 +143,7 @@ export default function NavBar() {
 
         {/* ── Mobile: toggle + hamburger ───────────────────────────────── */}
         <div className="flex items-center gap-3 lg:hidden">
-          <ThemeToggle />
+          <SkinSelector />
           <button
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={menuOpen}

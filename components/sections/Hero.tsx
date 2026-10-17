@@ -114,10 +114,7 @@ export default function Hero() {
             variants={itemVariants}
             className="flex flex-wrap items-center gap-4 mb-1"
           >
-            <h1
-              className="font-display font-bold uppercase text-text-primary leading-none"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 4.75rem)", letterSpacing: "-0.01em" }}
-            >
+            <h1 className="hero-title font-display uppercase text-text-primary">
               Software
             </h1>
             <DotGrid />
@@ -129,8 +126,7 @@ export default function Hero() {
           {/* Headline row 2: DEVELOPER */}
           <m.h1
             variants={itemVariants}
-            className="font-display font-bold uppercase accent-text leading-none mb-7"
-            style={{ fontSize: "clamp(2.5rem, 7vw, 4.75rem)", letterSpacing: "-0.01em" }}
+            className="hero-title font-display uppercase accent-text mb-7"
           >
             Developer
           </m.h1>

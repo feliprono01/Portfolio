@@ -3,65 +3,145 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   THEME TOKENS
-   Dark is the default theme; [data-theme="light"] overrides.
+   SKINS
+   Each console skin only defines RGB triplets + typography/effect
+   knobs. :root derives usable colors from the triplets, so Tailwind's
+   opacity modifiers (bg-bg-primary/40) and plain var() both work.
+   Phosphor is the default (also applies before data-skin is set).
    ═══════════════════════════════════════════════════════════════ */
 :root,
-:root[data-theme="dark"] {
-  /* Neutrals */
-  --color-bg: #1a1814;
-  --color-surface: #211e18;
-  --color-surface-elevated: #2b2720;
-  --color-text-primary: #f2e8d5;
-  --color-text-secondary: #b5a88f;
-  --color-text-muted: #8a8068;
-  --color-border: #4f473a;
-  --color-border-strong: #6b6250;
+:root[data-skin="phosphor"] {
+  --color-bg-rgb: 10 15 10;
+  --color-surface-rgb: 14 21 14;
+  --color-surface-elevated-rgb: 22 34 22;
+  --color-text-primary-rgb: 214 245 214;
+  --color-text-secondary-rgb: 143 191 143;
+  --color-text-muted-rgb: 110 160 110;
+  --color-border-rgb: 31 58 31;
+  --color-border-strong-rgb: 52 120 52;
+  --color-accent-primary-rgb: 51 255 102;
+  --color-accent-secondary-rgb: 255 176 0;
 
-  /* Accents — used for text/links/icons */
-  --color-accent-primary: #e0a245; /* mustard */
-  --color-accent-secondary: #6e9077; /* sage */
+  --font-display: var(--font-vt323), "Courier New", monospace;
+  --font-sans: var(--font-jetbrains), ui-monospace, monospace;
+  --display-weight: 400;
+  --display-tracking: 0.02em;
+  --display-leading: 1;
+  --display-leading-hero: 0.95;
+  --display-adjust: 0.46;
 
-  /* RGB triplets (no #) so Tailwind's opacity modifiers (e.g. bg-bg-primary/40) work */
+  --text-glow: 0 0 8px rgb(51 255 102 / 0.45);
+  --bg-texture: radial-gradient(ellipse at 50% -10%, rgb(51 255 102 / 0.09), transparent 60%);
+  --bg-texture-size: auto;
+  --chamfer: 10px;
+  --chamfer-sm: 6px;
+  --crt-scan: 0.22;
+  --crt-vignette: 0.5;
+  --crt-ab: 1;
+}
+
+:root[data-skin="gameboy"] {
+  --color-bg-rgb: 155 188 15;
+  --color-surface-rgb: 148 181 15;
+  --color-surface-elevated-rgb: 143 176 15;
+  --color-text-primary-rgb: 15 56 15;
+  --color-text-secondary-rgb: 20 62 20;
+  --color-text-muted-rgb: 20 64 20;
+  --color-border-rgb: 56 104 40;
+  --color-border-strong-rgb: 40 88 40;
+  --color-accent-primary-rgb: 15 56 15;
+  --color-accent-secondary-rgb: 20 64 20;
+
+  --font-display: var(--font-press-start), "Courier New", monospace;
+  --font-sans: var(--font-jetbrains), ui-monospace, monospace;
+  --display-weight: 400;
+  --display-tracking: 0;
+  --display-leading: 1.35;
+  --display-leading-hero: 1.25;
+  --display-adjust: 0.4;
+
+  --text-glow: 0 0 0 transparent;
+  --bg-texture: linear-gradient(rgb(15 56 15 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(15 56 15 / 0.05) 1px, transparent 1px);
+  --bg-texture-size: 4px 4px;
+  --chamfer: 6px;
+  --chamfer-sm: 4px;
+  --crt-scan: 0.04;
+  --crt-vignette: 0.18;
+  --crt-ab: 0.35;
+}
+
+:root[data-skin="earth"] {
   --color-bg-rgb: 26 24 20;
   --color-surface-rgb: 33 30 24;
   --color-surface-elevated-rgb: 43 39 32;
   --color-text-primary-rgb: 242 232 213;
   --color-text-secondary-rgb: 181 168 143;
-  --color-text-muted-rgb: 138 128 104;
+  --color-text-muted-rgb: 158 147 122;
   --color-border-rgb: 79 71 58;
-  --color-border-strong-rgb: 107 98 80;
+  --color-border-strong-rgb: 130 118 92;
   --color-accent-primary-rgb: 224 162 69;
-  --color-accent-secondary-rgb: 110 144 119;
+  --color-accent-secondary-rgb: 122 158 131;
+
+  --font-display: var(--font-chakra), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --display-weight: 600;
+  --display-tracking: -0.01em;
+  --display-leading: 1.1;
+  --display-leading-hero: 1;
+  --display-adjust: none;
+
+  --text-glow: 0 0 0 transparent;
+  --bg-texture: none;
+  --bg-texture-size: auto;
+  --chamfer: 14px;
+  --chamfer-sm: 8px;
+  --crt-scan: 0;
+  --crt-vignette: 0;
+  --crt-ab: 0;
 }
 
-:root[data-theme="light"] {
-  --color-bg: #f7eedc;
-  --color-surface: #ffffff;
-  --color-surface-elevated: #efe4cc;
-  --color-text-primary: #2b261e;
-  --color-text-secondary: #5a5244;
-  --color-text-muted: #8a8068;
-  --color-border: #d8c9a8;
-  --color-border-strong: #c2ad80;
+:root[data-skin="arcade"] {
+  --color-bg-rgb: 11 6 24;
+  --color-surface-rgb: 18 10 38;
+  --color-surface-elevated-rgb: 27 16 56;
+  --color-text-primary-rgb: 244 236 255;
+  --color-text-secondary-rgb: 185 166 224;
+  --color-text-muted-rgb: 150 128 196;
+  --color-border-rgb: 58 36 104;
+  --color-border-strong-rgb: 120 84 200;
+  --color-accent-primary-rgb: 255 43 214;
+  --color-accent-secondary-rgb: 25 230 255;
 
-  /* Darkened variants so text keeps AA contrast on a cream background */
-  --color-accent-primary: #8a5a22; /* dark mustard / rust */
-  --color-accent-secondary: #4f6b57; /* dark sage */
+  --font-display: var(--font-orbitron), system-ui, sans-serif;
+  --font-sans: var(--font-jetbrains), ui-monospace, monospace;
+  --display-weight: 700;
+  --display-tracking: 0.03em;
+  --display-leading: 1.1;
+  --display-leading-hero: 1.05;
+  --display-adjust: none;
 
-  --color-bg-rgb: 247 238 220;
-  --color-surface-rgb: 255 255 255;
-  --color-surface-elevated-rgb: 239 228 204;
-  --color-text-primary-rgb: 43 38 30;
-  --color-text-secondary-rgb: 90 82 68;
-  --color-text-muted-rgb: 138 128 104;
-  --color-border-rgb: 216 201 168;
-  --color-border-strong-rgb: 194 173 128;
-  --color-accent-primary-rgb: 138 90 34;
-  --color-accent-secondary-rgb: 79 107 87;
+  --text-glow: 0 0 10px rgb(255 43 214 / 0.55);
+  --bg-texture: radial-gradient(ellipse at 50% -10%, rgb(255 43 214 / 0.14), transparent 55%), linear-gradient(rgb(25 230 255 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(255 43 214 / 0.05) 1px, transparent 1px);
+  --bg-texture-size: auto, 48px 48px, 48px 48px;
+  --chamfer: 18px;
+  --chamfer-sm: 10px;
+  --crt-scan: 0.16;
+  --crt-vignette: 0.45;
+  --crt-ab: 1;
 }
 
 :root {
+  --color-bg: rgb(var(--color-bg-rgb));
+  --color-surface: rgb(var(--color-surface-rgb));
+  --color-surface-elevated: rgb(var(--color-surface-elevated-rgb));
+  --color-text-primary: rgb(var(--color-text-primary-rgb));
+  --color-text-secondary: rgb(var(--color-text-secondary-rgb));
+  --color-text-muted: rgb(var(--color-text-muted-rgb));
+  --color-border: rgb(var(--color-border-rgb));
+  --color-border-strong: rgb(var(--color-border-strong-rgb));
+  --color-accent-primary: rgb(var(--color-accent-primary-rgb));
+  --color-accent-secondary: rgb(var(--color-accent-secondary-rgb));
+
   /* Spacing */
   --section-px: 1.5rem;
   --section-py: 5rem;
@@ -76,10 +156,13 @@
   --z-nav: 100;
   --z-modal: 200;
   --z-tooltip: 300;
+}
 
-  /* Chamfer (cut-corner) size */
-  --chamfer: 14px;
-  --chamfer-sm: 8px;
+/* Chromatic aberration: a faint red/cyan text fringe, only while CRT is on */
+html[data-crt="on"] {
+  --crt-aberration:
+    0.6px 0 0 rgb(255 0 60 / calc(0.3 * var(--crt-ab))),
+    -0.6px 0 0 rgb(0 200 255 / calc(0.3 * var(--crt-ab)));
 }
 
 @media (min-width: 1024px) {
@@ -108,23 +191,32 @@ html {
 
 body {
   background-color: var(--color-bg);
+  background-image: var(--bg-texture);
+  background-size: var(--bg-texture-size);
+  background-attachment: fixed;
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.6;
+  font-synthesis: none;
+  text-shadow: var(--crt-aberration, 0 0 0 transparent);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  line-height: 1.1;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
+@layer base {
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-display);
+    font-size-adjust: var(--display-adjust);
+    line-height: var(--display-leading);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--display-tracking);
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    text-shadow: var(--text-glow), var(--crt-aberration, 0 0 0 transparent);
+  }
 }
 
 a {
@@ -256,6 +348,7 @@ button {
 
   /* Primary (arcade) button — chamfered, with a chunky "pushable" edge */
   .btn-primary {
+    font-size-adjust: var(--display-adjust);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -281,7 +374,7 @@ button {
   .btn-primary:hover {
     filter: brightness(1.1);
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 0 var(--color-border-strong), 0 6px 20px rgba(224, 162, 69, 0.25);
+    box-shadow: 0 6px 0 0 var(--color-border-strong), 0 6px 20px color-mix(in srgb, var(--color-accent-primary) 30%, transparent);
   }
   .btn-primary:active {
     transform: translateY(4px);
@@ -291,6 +384,7 @@ button {
 
   /* Ghost button */
   .btn-ghost {
+    font-size-adjust: var(--display-adjust);
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -324,11 +418,11 @@ button {
   /* Section heading with code-bracket wrapper: < TITLE /> */
   .section-heading {
     font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 600;
-    font-family: var(--font-display);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 7vw, 4.75rem);
+    line-height: var(--display-leading-hero);
   }
 
   .overline {
@@ -392,11 +486,66 @@ button {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CUSTOM CURSOR (hide native on desktop with real pointer)
+   CRT OVERLAY (scanlines + vignette + faint flicker/roll)
+   Mounted once in the layout; html[data-crt] is managed by CrtOverlay.
    ═══════════════════════════════════════════════════════════════ */
-@media (hover: hover) and (pointer: fine) {
-  * { cursor: none !important; }
-  a, button { cursor: none !important; }
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: none;
+  pointer-events: none;
+}
+
+html[data-crt="on"] .crt-overlay {
+  display: block;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / var(--crt-vignette)) 100%),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(0 0 0 / var(--crt-scan)) 0,
+      rgb(0 0 0 / var(--crt-scan)) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+}
+
+html[data-crt="on"][data-motion="full"] .crt-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 14vh;
+  background: linear-gradient(to bottom, transparent, rgb(255 255 255 / calc(0.035 * var(--crt-ab))), transparent);
+  animation: crt-roll 9s linear infinite;
+}
+
+html[data-crt="on"][data-motion="full"] .crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(255 255 255 / calc(0.012 * var(--crt-ab)));
+  animation: crt-flicker 5s steps(1) infinite;
+}
+
+@keyframes crt-roll {
+  from { transform: translateY(-20vh); }
+  to { transform: translateY(110vh); }
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  7% { opacity: 0; }
+  8% { opacity: 1; }
+  52% { opacity: 0.4; }
+  53% { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PIXEL CURSOR (native cursor is only hidden once the sprite is live)
+   ═══════════════════════════════════════════════════════════════ */
+html.pixel-cursor-on,
+html.pixel-cursor-on * {
+  cursor: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

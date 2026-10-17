@@ -1,10 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-
-export type SkinId = "phosphor" | "gameboy" | "earth" | "arcade";
+import { DEFAULT_SKIN, type SkinId } from "@/lib/skins";
 
 export const STORE_KEY = "fp-portfolio";
-export const DEFAULT_SKIN: SkinId = "phosphor";
 
 interface AppState {
   skin: SkinId;
