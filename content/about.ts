@@ -1,3 +1,9 @@
+export const CHARACTER = {
+  name: "Felipe Prono",
+  class: "Full Stack Developer",
+  origin: "Santa Fe, Argentina",
+};
+
 export const PHILOSOPHY_PARAGRAPHS: { text: string; strong?: string[] }[] = [
   {
     text: "Mi filosofía de desarrollo se basa en la convergencia entre la ingeniería de software tradicional y la potencia de la Inteligencia Artificial. No veo a la IA como un reemplazo, sino como un multiplicador de capacidades que me permite entregar soluciones robustas en tiempos optimizados. Mi enfoque es construir sistemas escalables donde la precisión del código y la innovación inteligente trabajen en sintonía.",

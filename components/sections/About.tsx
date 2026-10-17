@@ -9,12 +9,14 @@ import { m, useInView } from "framer-motion";
 import { useRef, type ReactNode } from "react";
 import { MapPin, GraduationCap, Clock, Languages, Download, ArrowRight } from "lucide-react";
 import {
+  CHARACTER,
   PHILOSOPHY_PARAGRAPHS,
   PERSONAL_INFO,
   EDUCATION,
   CERT_SUMMARY,
   type PersonalInfoIcon,
 } from "@/content/about";
+import { SKILL_CATEGORIES, getAttributes } from "@/content/skills";
 import { getSection } from "@/content/sections";
 
 const PERSONAL_ICONS: Record<PersonalInfoIcon, ReactNode> = {
@@ -75,6 +77,26 @@ function PercentBar({ value, label }: { value: number; label: string }) {
   );
 }
 
+/** RPG-style attribute bar — score is out of 10, derived from the skill data. */
+function AttributeBar({ label, score, inView, delay }: { label: string; score: number; inView: boolean; delay: number }) {
+  return (
+    <div>
+      <div className="flex justify-between text-xs font-mono mb-1.5">
+        <span className="text-text-secondary uppercase tracking-wide">{label}</span>
+        <span className="accent-text">{score.toFixed(1)}/10</span>
+      </div>
+      <div className="h-2 bg-bg-primary border border-border-default overflow-hidden">
+        <m.div
+          className="h-full bg-accent-primary"
+          initial={{ width: 0 }}
+          animate={inView ? { width: `${score * 10}%` } : { width: 0 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay }}
+        />
+      </div>
+    </div>
+  );
+}
+
 /** Renders a paragraph, bolding any phrase listed in `strong`. */
 function Paragraph({ text, strong = [] }: { text: string; strong?: string[] }) {
   if (strong.length === 0) return <p>{text}</p>;
@@ -99,10 +121,54 @@ function Paragraph({ text, strong = [] }: { text: string; strong?: string[] }) {
 
 export default function About() {
   const certsSection = getSection("certifications");
+  const attributes = getAttributes(SKILL_CATEGORIES);
+  const attrsRef = useRef<HTMLDivElement>(null);
+  const attrsInView = useInView(attrsRef, { once: true, margin: "-60px" });
 
   return (
     <SectionWrapper id="about">
       <div className="container-main">
+        <m.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }}>
+          <m.div variants={fadeUp}>
+            <SectionTitle className="mb-6">Sobre mí</SectionTitle>
+          </m.div>
+        </m.div>
+
+        {/* ── Character sheet header: class + RPG attribute bars ──── */}
+        <m.div
+          ref={attrsRef}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-12"
+        >
+          <ChamferBox elevated accent="primary" className="p-6 lg:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 pb-6 border-b border-border-subtle">
+              <div>
+                <p className="text-xs font-mono text-text-muted uppercase tracking-wider mb-1">Ficha de personaje</p>
+                <h3 className="font-display text-2xl uppercase text-text-primary">{CHARACTER.name}</h3>
+              </div>
+              <div className="flex gap-2">
+                <span className="pill font-mono">Clase: {CHARACTER.class}</span>
+                <span className="pill font-mono">{CHARACTER.origin}</span>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {attributes.map((attr, i) => (
+                <AttributeBar
+                  key={attr.label}
+                  label={attr.label}
+                  score={attr.score}
+                  inView={attrsInView}
+                  delay={i * 0.1}
+                />
+              ))}
+            </div>
+          </ChamferBox>
+        </m.div>
+
         {/* ── Two-Column Layout ───────────────────────────────── */}
         <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
           {/* Left: Text column (3/5) */}
@@ -113,9 +179,9 @@ export default function About() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
           >
-            <m.div variants={fadeUp}>
-              <SectionTitle className="mb-6">Sobre mí</SectionTitle>
-            </m.div>
+            <m.p className="text-xs font-mono text-text-muted uppercase tracking-wider mb-4" variants={fadeUp}>
+              Historia
+            </m.p>
 
             <m.div className="space-y-5 text-text-secondary leading-relaxed" variants={fadeUp}>
               {PHILOSOPHY_PARAGRAPHS.map((p, i) => (

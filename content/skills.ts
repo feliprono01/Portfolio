@@ -23,6 +23,32 @@ export interface SkillCategory {
   skills: Skill[];
 }
 
+export interface Attribute {
+  label: string;
+  /** 0-10 (one decimal), derived from the average skill level in the matching category — not hand-picked. */
+  score: number;
+}
+
+const ATTRIBUTE_LABELS: Record<SkillCategoryIcon, string> = {
+  frontend: "Frontend",
+  backend: "Backend",
+  database: "Data & Infra",
+  tools: "Tools",
+};
+
+/**
+ * RPG-style attribute bars for the "character sheet". Each score is the
+ * average skill level of its category scaled to 0-10 — same evidence the
+ * skill tree uses, just rolled up, so there's no separate number to keep
+ * in sync by hand.
+ */
+export function getAttributes(categories: SkillCategory[]): Attribute[] {
+  return categories.map((cat) => {
+    const avg = cat.skills.reduce((sum, s) => sum + s.level, 0) / cat.skills.length;
+    return { label: ATTRIBUTE_LABELS[cat.icon], score: Math.round((avg / 3) * 100) / 10 };
+  });
+}
+
 export const SKILL_CATEGORIES: SkillCategory[] = [
   {
     title: "Frontend & Mobile",
