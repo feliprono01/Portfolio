@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
 import OctaIcon from "@/components/ui/OctaIcon";
@@ -35,6 +35,11 @@ const branchVariants = {
 const NODE_CLIP =
   "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)";
 
+// Deterministic "organic" jitter — fixed per index so server/client match
+// (no Math.random here) but it reads as hand-placed, not a grid.
+const X_JITTER = [0, 10, -6, 16, -4, 8, -10, 4];
+const Y_JITTER = [0, -8, 6, -4, 10, -6, 4, -10];
+
 /** Legend chip — one filled node + the level it represents. */
 function LevelLegend({ level }: { level: SkillLevel }) {
   const fill = level === 3 ? 1 : level === 2 ? 0.55 : 0;
@@ -58,29 +63,37 @@ function LevelLegend({ level }: { level: SkillLevel }) {
  * One skill tree node: starts dim, "unlocks" (fills in, proportional to
  * level) the first time it scrolls into view. A level-3 node gets a solid
  * fill and a checkmark; level 2 a half-fill; level 1 stays an outline.
+ * Nudged off-grid by a small deterministic jitter so the branch reads as
+ * organically placed rather than a perfectly ruled list.
  */
 function SkillNode({
   skill,
+  index,
   inView,
   delay,
   onHover,
+  nodeRef,
 }: {
   skill: Skill;
+  index: number;
   inView: boolean;
   delay: number;
   onHover: (e: React.MouseEvent<HTMLDivElement>) => void;
+  nodeRef: (el: HTMLDivElement | null) => void;
 }) {
   const fill = skill.level === 3 ? 1 : skill.level === 2 ? 0.55 : 0;
+  const dx = X_JITTER[index % X_JITTER.length];
 
   return (
     <m.div
       className="relative z-10 flex items-center gap-4"
+      style={{ marginLeft: dx }}
       initial={{ opacity: 0, x: -10 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.4, delay, ease }}
       onMouseEnter={onHover}
     >
-      <div className="w-12 flex justify-center shrink-0">
+      <div ref={nodeRef} className="w-10 flex justify-center shrink-0">
         <m.span
           className="relative flex items-center justify-center w-7 h-7 border-2"
           style={{ clipPath: NODE_CLIP, borderColor: "var(--color-accent-primary)" }}
@@ -103,7 +116,12 @@ function SkillNode({
   );
 }
 
-/** One category branch: a root node (the category) with its skills hanging off a vertical line. */
+/**
+ * One category branch: a root node (the category) with curved SVG paths
+ * reaching out to each skill node — measured from real DOM positions
+ * (post-jitter) so the branches actually connect root → node, not a
+ * straight ruler line down a column.
+ */
 function SkillBranch({
   title,
   icon,
@@ -122,7 +140,44 @@ function SkillBranch({
   emitAt: (x: number, y: number) => void;
 }) {
   const branchRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [paths, setPaths] = useState<string[]>([]);
+  const [svgSize, setSvgSize] = useState({ w: 0, h: 0 });
   const inView = useInView(branchRef, { once: true, margin: "-80px" });
+
+  useEffect(() => {
+    const measure = () => {
+      const container = containerRef.current;
+      const root = rootRef.current;
+      if (!container || !root) return;
+      const cRect = container.getBoundingClientRect();
+      const rRect = root.getBoundingClientRect();
+      const rootPoint = { x: rRect.left + rRect.width / 2 - cRect.left, y: rRect.top + rRect.height / 2 - cRect.top };
+
+      const newPaths = nodeRefs.current.map((el, i) => {
+        if (!el) return "";
+        const nRect = el.getBoundingClientRect();
+        const nodePoint = { x: nRect.left + nRect.width / 2 - cRect.left, y: nRect.top + nRect.height / 2 - cRect.top };
+        const bow = Y_JITTER[i % Y_JITTER.length];
+        const c1y = rootPoint.y + (nodePoint.y - rootPoint.y) * 0.35 + bow;
+        const c2y = rootPoint.y + (nodePoint.y - rootPoint.y) * 0.75 + bow * 0.5;
+        return `M ${rootPoint.x} ${rootPoint.y} C ${rootPoint.x} ${c1y}, ${nodePoint.x} ${c2y}, ${nodePoint.x} ${nodePoint.y}`;
+      });
+      setPaths(newPaths);
+      setSvgSize({ w: cRect.width, h: cRect.height });
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (containerRef.current) ro.observe(containerRef.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [skills.length]);
 
   const handleHover = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -132,11 +187,9 @@ function SkillBranch({
   };
 
   return (
-    <m.div ref={branchRef} custom={index} variants={branchVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} className="relative">
-      <div className="absolute left-6 top-12 bottom-6 w-px bg-border-default" aria-hidden="true" />
-
-      <div className="flex items-center gap-4 mb-6 relative z-10">
-        <div className="w-12 flex justify-center shrink-0">
+    <m.div ref={branchRef} custom={index} variants={branchVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}>
+      <div className="flex items-center gap-4 mb-6">
+        <div ref={rootRef} className="w-10 flex justify-center shrink-0">
           <OctaIcon accent={accent}>{icon}</OctaIcon>
         </div>
         <div>
@@ -145,10 +198,40 @@ function SkillBranch({
         </div>
       </div>
 
-      <div className="space-y-4">
-        {skills.map((skill, si) => (
-          <SkillNode key={skill.name} skill={skill} inView={inView} delay={si * 0.08} onHover={handleHover} />
-        ))}
+      <div ref={containerRef} className="relative">
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          width={svgSize.w}
+          height={svgSize.h}
+          aria-hidden="true"
+        >
+          {paths.map((d, i) => (
+            <path
+              key={i}
+              d={d}
+              fill="none"
+              stroke="var(--color-border-strong)"
+              strokeWidth={1.5}
+              style={{ opacity: inView ? 0.7 : 0, transition: `opacity 0.5s ease ${i * 0.08 + 0.1}s` }}
+            />
+          ))}
+        </svg>
+
+        <div className="space-y-4">
+          {skills.map((skill, si) => (
+            <SkillNode
+              key={skill.name}
+              skill={skill}
+              index={si}
+              inView={inView}
+              delay={si * 0.08}
+              onHover={handleHover}
+              nodeRef={(el) => {
+                nodeRefs.current[si] = el;
+              }}
+            />
+          ))}
+        </div>
       </div>
     </m.div>
   );
@@ -191,7 +274,7 @@ export default function Skills() {
         </m.div>
 
         {/* ── Skill tree ──────────────────────────────────── */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 relative mt-12" style={{ zIndex: 2 }}>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-12 relative mt-12" style={{ zIndex: 2 }}>
           {SKILL_CATEGORIES.map((cat, ci) => (
             <SkillBranch
               key={cat.title}

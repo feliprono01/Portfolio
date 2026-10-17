@@ -1,9 +1,8 @@
 "use client";
 
 import { m } from "framer-motion";
-import { Gamepad2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
-import ChamferBox from "@/components/ui/ChamferBox";
 import Chip from "@/components/ui/Chip";
 import OctaPattern from "@/components/ui/OctaPattern";
 import PixelStrip from "@/components/ui/PixelStrip";
@@ -44,17 +43,6 @@ const SOCIAL_ICONS: Record<string, React.ReactNode> = {
   ),
 };
 
-/* ─── Decorative dot grid ─────────────────────────────────────────────────── */
-function DotGrid() {
-  return (
-    <span className="grid grid-cols-3 gap-[3px] shrink-0" aria-hidden="true">
-      {Array.from({ length: 9 }, (_, i) => (
-        <span key={i} className="w-[4px] h-[4px] bg-accent-secondary" />
-      ))}
-    </span>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════════════════════════ */
 export default function TitleScreen() {
   const projectsSection = getSection("projects");
@@ -90,14 +78,10 @@ export default function TitleScreen() {
             {HERO.overline}
           </m.p>
 
-          {/* Headline row 1: SOFTWARE + dots + controls capsule */}
-          <m.div variants={itemVariants} className="flex flex-wrap items-center gap-4 mb-1">
-            <h1 className="hero-title font-display uppercase text-text-primary">{HERO.titleTop}</h1>
-            <DotGrid />
-            <ChamferBox accent="primary" className="px-4 py-3 inline-flex items-center">
-              <Gamepad2 className="w-6 h-6 accent-text" strokeWidth={1.75} />
-            </ChamferBox>
-          </m.div>
+          {/* Headline row 1 */}
+          <m.h1 variants={itemVariants} className="hero-title font-display uppercase text-text-primary mb-1">
+            {HERO.titleTop}
+          </m.h1>
 
           {/* Headline row 2 */}
           <m.h1 variants={itemVariants} className="hero-title font-display uppercase accent-text mb-7">

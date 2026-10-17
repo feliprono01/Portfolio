@@ -3,13 +3,14 @@
 import { useId, useRef, useState, type MouseEvent } from "react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionTitle from "@/components/ui/SectionTitle";
-import ChamferBox from "@/components/ui/ChamferBox";
 import Chip from "@/components/ui/Chip";
 import OctaPattern from "@/components/ui/OctaPattern";
 import Dialog from "@/components/ui/Dialog";
 import { m, AnimatePresence } from "framer-motion";
 import { Star, Lock, ExternalLink } from "lucide-react";
 import { PROJECT_CATEGORIES, PROJECTS, BADGE_ACCENT, type Project, type ProjectCategory } from "@/content/projects";
+
+const GOLD = "#e0b030";
 
 /* ─── Animation Variants ──────────────────────────────────────── */
 
@@ -48,6 +49,8 @@ function Cartridge({ project, onOpen }: { project: Project; onOpen: () => void }
     ref.current?.style.setProperty("--rx", "0deg");
   };
 
+  const gold = project.featured;
+
   return (
     <button
       ref={ref}
@@ -62,40 +65,60 @@ function Cartridge({ project, onOpen }: { project: Project; onOpen: () => void }
         transition: "transform 150ms ease-out",
       }}
     >
-      <ChamferBox
-        elevated
-        accent="border"
-        className="flex flex-col h-full transition-colors duration-200 group-hover:border-accent-primary group-focus-visible:border-accent-primary"
+      {/* Connector tab — the part that would slide into the console */}
+      <div
+        className="relative z-10 mx-7 h-3.5 chamfer-sm flex items-end justify-center gap-[2px] px-2 pb-0.5 transition-colors duration-200"
+        style={{ backgroundColor: gold ? GOLD : "var(--color-border-strong)" }}
+        aria-hidden="true"
       >
-        {/* Label area */}
-        <div className="relative h-32 border-b border-border-subtle bg-bg-primary/40 flex items-center justify-center overflow-hidden">
-          <OctaPattern className="absolute -top-4 -right-4 opacity-40" />
-          <span className="font-display font-semibold uppercase text-text-secondary text-base tracking-wide text-center px-4">
-            {project.title}
+        {Array.from({ length: 7 }, (_, i) => (
+          <span key={i} className="w-full h-1" style={{ backgroundColor: "var(--color-bg)", opacity: 0.4 }} />
+        ))}
+      </div>
+
+      {/* Cartridge body */}
+      <div
+        className="relative -mt-1 flex flex-col h-full border-2 chamfer-cartridge transition-colors duration-200"
+        style={{
+          backgroundColor: "var(--color-surface-elevated)",
+          borderColor: gold ? GOLD : "var(--color-border)",
+          boxShadow: gold ? `0 0 18px rgb(224 176 48 / 0.3)` : undefined,
+        }}
+      >
+        {gold && (
+          <span className="absolute top-2 left-2 z-10 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider text-bg-primary chamfer-sm" style={{ backgroundColor: GOLD }}>
+            <Star className="w-2.5 h-2.5" fill="currentColor" strokeWidth={0} />
+            Edición especial
           </span>
-          {project.featured && (
-            <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-semibold bg-accent-primary text-bg-primary chamfer-sm">
-              <Star className="w-2.5 h-2.5" fill="currentColor" strokeWidth={0} />
-              Top
+        )}
+
+        {/* Printed label — inset, like a sticker glued to the shell */}
+        <div className="m-3 mb-0">
+          <div
+            className="relative h-28 border overflow-hidden flex items-center justify-center chamfer-sm"
+            style={{
+              backgroundColor: "var(--color-bg)",
+              borderColor: gold ? GOLD : "var(--color-border-default)",
+            }}
+          >
+            <OctaPattern className="absolute -top-4 -right-4 opacity-40" />
+            <span
+              className="font-display font-semibold uppercase text-base tracking-wide text-center px-4"
+              style={{ color: gold ? GOLD : "var(--color-text-secondary)" }}
+            >
+              {project.title}
             </span>
-          )}
+          </div>
         </div>
 
-        {/* Connector ridges — the cartridge detail */}
-        <div className="flex gap-1 px-4 pt-3" aria-hidden="true">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className="h-1 flex-1 bg-border-default" />
-          ))}
-        </div>
-
-        <div className="p-4 flex flex-col flex-1">
+        <div className="p-4 pt-3 flex flex-col flex-1">
           <span className="pill self-start text-[10px] font-mono mb-2">{project.category}</span>
           <h3 className="font-display font-semibold uppercase text-base text-text-primary mb-1">
             {project.title}
           </h3>
           <p className="text-text-muted text-xs font-mono mt-auto pt-3">Ver detalle →</p>
         </div>
-      </ChamferBox>
+      </div>
     </button>
   );
 }

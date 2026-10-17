@@ -35,8 +35,9 @@
   --bg-texture-size: auto;
   --chamfer: 10px;
   --chamfer-sm: 6px;
-  --crt-scan: 0.22;
-  --crt-vignette: 0.5;
+  --chamfer-lg: 26px;
+  --crt-scan: 0.3;
+  --crt-vignette: 0.6;
   --crt-ab: 1;
 }
 
@@ -65,8 +66,9 @@
   --bg-texture-size: 4px 4px;
   --chamfer: 6px;
   --chamfer-sm: 4px;
-  --crt-scan: 0.04;
-  --crt-vignette: 0.18;
+  --chamfer-lg: 16px;
+  --crt-scan: 0.09;
+  --crt-vignette: 0.28;
   --crt-ab: 0.35;
 }
 
@@ -95,6 +97,7 @@
   --bg-texture-size: auto;
   --chamfer: 14px;
   --chamfer-sm: 8px;
+  --chamfer-lg: 32px;
   --crt-scan: 0;
   --crt-vignette: 0;
   --crt-ab: 0;
@@ -125,8 +128,9 @@
   --bg-texture-size: auto, 48px 48px, 48px 48px;
   --chamfer: 18px;
   --chamfer-sm: 10px;
-  --crt-scan: 0.16;
-  --crt-vignette: 0.45;
+  --chamfer-lg: 36px;
+  --crt-scan: 0.24;
+  --crt-vignette: 0.55;
   --crt-ab: 1;
 }
 
@@ -321,6 +325,19 @@ button {
       calc(100% - var(--chamfer)) 100%,
       0% 100%,
       0% var(--chamfer)
+    );
+  }
+  /* Chamfer the top-right / bottom-left corners, bigger cut — the
+     cartridge body shape (opposite corners from .chamfer so it reads as
+     a distinct silhouette, not just another rounded-rect card). */
+  .chamfer-cartridge {
+    clip-path: polygon(
+      0% 0%,
+      calc(100% - var(--chamfer-lg)) 0%,
+      100% var(--chamfer-lg),
+      100% 100%,
+      var(--chamfer-lg) 100%,
+      0% calc(100% - var(--chamfer-lg))
     );
   }
 
